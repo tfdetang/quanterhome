@@ -1,0 +1,193 @@
+{% extends "header.html"%}
+
+{% block body %}
+
+<style type="text/css">
+
+.main
+{
+max-width:1400px;
+min-width:1000px;
+}
+
+.panel{
+box-shadow: 2px 1px 3px 1px #aaaaaa;
+}
+
+#chart{
+min-width: 800px;
+height:600px;
+}
+
+
+</style>
+
+<script src="//cdn.bootcss.com/echarts/3.4.0/echarts.min.js"></script>
+
+<div class="container-fluid main">
+
+	<div class="col-md-2">
+
+		<div class="btn-group">
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+			        aria-haspopup="true" aria-expanded="false">
+				品种 <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				<li><a href="/quota/nxb_history?code=878002">沪深300看涨</a></li>
+				<li><a href="/quota/nxb_history?code=878003">沪深300看跌</a></li>
+				<li><a href="/quota/nxb_history?code=878004">创业看涨</a></li>
+				<li><a href="/quota/nxb_history?code=878005">创业看跌</a></li>
+				<li><a href="/quota/nxb_history?code=878006">上证50看涨</a></li>
+				<li><a href="/quota/nxb_history?code=878007">上证50看跌</a></li>
+				<li><a href="/quota/nxb_history?code=878008">中证500看涨</a></li>
+				<li><a href="/quota/nxb_history?code=878009">中证500看跌</a></li>
+			</ul>
+		</div>
+
+		<hr>
+
+		<div class="list-group">
+
+			<a href="/quota/nxb?code={{code}}" class="list-group-item">日内行情</a>
+			<a href="#" class="list-group-item  active">10日行情</a>
+		</div>
+
+	</div>
+
+	<div class="col-md-8">
+
+		<div class="row">
+			<div id="chart"></div>
+
+			<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('chart'));
+        myChart.showLoading();
+        $.getJSON('/data/get_nxb_history', {
+            'day':{{day}},
+            'code':{{code}}
+         },function (data) {
+         myChart.hideLoading();
+
+        // 指定图表的配置项和数据
+        var option = {
+    title: {
+        text: '{{name}}({{code}})历史行情',
+        subtext: '多日价格与折价(10分钟)',
+        x: 'center'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            animation: false
+        }
+    },
+    legend: {
+        data:['价格','净值','折价率'],
+        x: 'left'
+    },
+    toolbox: {
+        feature: {
+            dataZoom: {
+                yAxisIndex: 'none'
+            },
+            restore: {},
+            saveAsImage: {}
+        }
+    },
+    dataZoom: [
+        {
+            show: true,
+            realtime: false,
+            start: 50,
+            end: 100,
+            xAxisIndex: [0, 1]
+        },
+        {
+            type: 'inside',
+            realtime: false,
+            start: 30,
+            end: 70,
+            xAxisIndex: [0, 1]
+        }
+    ],
+    grid: [{
+        left: 60,
+        right: 60,
+        height: '55%'
+    }, {
+        left: 60,
+        right: 60,
+        top: '75%',
+        height: '15%'
+    }],
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : false,
+            axisLine: {onZero: true},
+            data: data.data.datetime
+        },
+        {
+            gridIndex: 1,
+            type : 'category',
+            boundaryGap : false,
+            axisLine: {onZero: false},
+            data: data.data.datetime,
+        }
+    ],
+    yAxis : [
+        {
+            name : '交易价格',
+            type : 'value',
+            min : data.min,
+        },
+        {
+            gridIndex: 1,
+            name : '折价',
+            type : 'value',
+        }
+    ],
+    series : [
+        {
+            name:'价格',
+            type:'line',
+            symbolSize: 8,
+            hoverAnimation: false,
+            data: data.data.last_price
+        },
+        {
+            name:'净值',
+            type:'line',
+            symbolSize: 8,
+            hoverAnimation: false,
+            data: data.data.svs_price
+        },
+        {
+            name:'折价率',
+            type:'line',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            hoverAnimation: false,
+            data: data.data.discount
+        }
+    ]
+};
+myChart.setOption(option);
+});
+
+
+
+
+
+
+			</script>
+
+		</div>
+	</div>
+
+
+</div>
+
+{% endblock %}

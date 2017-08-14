@@ -1,0 +1,183 @@
+{% extends "header.html"%}
+
+{% block body %}
+
+<style type="text/css">
+
+.head
+{
+margin-top:-25px;
+height:240px;
+background:url({{ url_for('static', filename='images/post-bg2.jpg')}});
+box-shadow: 2px 1px 3px 1px #aaaaaa;
+}
+
+#panel
+{
+margin: auto;
+margin-top:-150px;
+left:0px;
+right:0px;
+max-width:1200px;
+min-width:800px;
+}
+
+.chat {
+max-width:750px;
+min-width:500px;
+}
+
+.bubble{
+    background-color: #F2F2F2;
+    border-radius: 10px;
+    box-shadow: 0 0 3px #B2B2B2;
+    display: inline-block;
+    padding: 5px 18px;
+    position: relative;
+    vertical-align: top;
+}
+
+.bubble::before {
+    background-color: #F2F2F2;
+    content: "\00a0";
+    display: block;
+    height: 18px;
+    position: absolute;
+    top: 8px;
+    transform:             rotate( 29deg ) skew( -35deg );
+        -moz-transform:    rotate( 29deg ) skew( -35deg );
+        -ms-transform:     rotate( 29deg ) skew( -35deg );
+        -o-transform:      rotate( 29deg ) skew( -35deg );
+        -webkit-transform: rotate( 29deg ) skew( -35deg );
+    width:  18px;
+}
+
+.you {
+    float: left;
+    margin: 10px 180px 10px 20px;
+}
+
+.you::before {
+    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
+    left: -7px;
+}
+
+.me {
+    float: right;
+    margin: 10px 20px 10px 180px;
+}
+
+.me::before {
+    box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
+    right: -7px;
+}
+
+
+</style>
+
+
+<div class="well head">
+
+</div>
+
+
+<div class="container-fluid">
+	<div class="row" id="panel">
+
+		<div class="col-xs-12 col-md-8">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h4>
+						<small>发私信给</small>
+						{{user.nickname}}：
+					</h4>
+					<form class="editor" action="/people/{{user.id}}/send_message" method="post" role="form">
+						{{ messageform.hidden_tag() }}
+						<div class="col-md-8">
+
+							{{messageform.body(rows=3, class='form-control')}}
+							{% for error in messageform.body.errors %}
+							{{error}}
+							{% endfor %}
+
+						</div>
+						<div class="col-md-2">
+							<button class="btn btn-primary" type="submit" name="form-name" value="message">提交</button>
+						</div>
+					</form>
+
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4>私信记录</h4>
+				</div>
+
+				<div class="panel-body">
+
+					{% for message in messages %}
+					<div class="chat">
+
+						{% if message.direction==0 %}
+						<div class="media-right">
+							<div class="media-body">
+								<div class="bubble me">
+									<h5>{{message.body}}<br>
+										<small>{{momentjs(message.time_send).calendar()}}</small>
+									</h5>
+								</div>
+							</div>
+
+							<p class="media-right">
+								<img style="width:45px;" class="media-object"
+								     src="{{ url_for('homepage')}}{{ g.user.avatar }}" alt=" ">
+							</p>
+						</div>
+
+						{% else %}
+						<div class="media-left">
+							<p class="media-left">
+								<img style="width:45px;" class="media-object"
+								     src="{{ url_for('homepage')}}{{ user.avatar }}" alt=" ">
+							</p>
+							<div class="media-body">
+								<div class="bubble you">
+									<h5>{{message.body}}<br>
+										<small>{{momentjs(message.time_send).calendar()}}</small>
+									</h5>
+								</div>
+							</div>
+						</div>
+
+						{% endif %}
+
+					</div>
+
+					{% endfor %}
+
+				</div>
+
+			</div>
+		</div>
+
+		<div class="col-xs-6 col-md-4">
+			<div class="list-group">
+
+				<a href="/people/{{user.id}}" class="list-group-item">动态</a>
+				<a href="/people/{{user.id}}/post" class="list-group-item">ta的文章</a>
+				<a href="#" class="list-group-item">ta的收藏</a>
+
+				{% if g.user.id == user.id %}
+				<hr>
+				<a href="/people/notify" class="list-group-item active">消息</a>
+				<a href="/people/edit" class="list-group-item">修改资料</a>
+				<a href="/people/privicy" class="list-group-item">隐私设置</a>
+				{% endif %}
+			</div>
+		</div>
+
+	</div>
+</div>
+
+{% endblock %}

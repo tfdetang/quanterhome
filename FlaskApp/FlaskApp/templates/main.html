@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="Zh">
+<head>
+	<meta charset="UTF-8">
+	<title>矿工之家</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontawesome/4.7.0/css/font-awesome.min.css">
+	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+	<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/moment.js') }}"></script>
+	<script>moment.locale(['zh-cn']);</script>
+</head>
+
+<script type="text/javascript">
+	$(window).bind("load", function() {
+		var footerHeight = 0,
+				footerTop = 0,
+				$footer = $("#footer");
+		positionFooter();
+		//定义positionFooter function
+		function positionFooter() {
+			//取到div#footer高度
+			footerHeight = $footer.height();
+			//div#footer离屏幕顶部的距离
+			footerTop = ($(window).scrollTop()+$(window).height()-footerHeight)+"px";
+			//如果页面内容高度小于屏幕高度，div#footer将绝对定位到屏幕底部，否则div#footer保留它的正常静态定位
+			if ( ($(document.body).height()+footerHeight) < $(window).height()) {
+				$("footer").addClass("fixed-bottom");
+			} else {
+				$("footer").removeClass("fixed-bottom");
+			}
+		}
+		$(window).scroll(positionFooter).resize(positionFooter);
+	});
+
+</script>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style1.css') }}">
+
+<style type="text/css">
+font-family: 微软雅黑, 'Helvetica Neue', Arial, 'Hiragino Sans GB', STHeiti, 'Microsoft YaHei', 'WenQuanYi Micro Hei', SimSun, Song, sans-serif;
+html,body{
+margin:0;
+padding:0;
+}
+
+.fixed-bottom {position: fixed;bottom: 0;width:100%;}
+
+#footer{
+height:60px;
+}
+
+.spliter {
+border: 0;
+height: 0;
+border-top: 1px solid rgba(0, 0, 0, 0.1);
+border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+ol,ul {
+	list-style:none;
+}
+
+#nav{
+z-index: 1;
+background-color:transparent;
+border-color:transparent;
+}
+
+h2, h3{
+color:white;
+font-weight:600;
+}
+
+
+.texticon{
+color:white;
+font-size:25px;
+text-align:center;
+}
+
+.text-center{
+color:white;
+font-weight:800;
+font-size:15px;
+}
+
+#row{
+position:relative;
+margin-top:200px;
+}
+
+.jumbotron
+{
+margin-top:-50px;
+max-width:250px;
+background:transparent;
+color:white;
+}
+
+.panel{
+margin-right:50px;
+max-width:400px;
+min-width:250px;
+box-shadow: 3px 4px 3px 2px #666666;
+}
+
+form
+{margin-left:40px;
+margin-right:40px;
+margin-top:20px;
+margin-bottom:20px;}
+
+a:hover{color:#fff;}
+
+
+</style>
+
+
+<body>
+
+<div id="main-container">
+	<header>
+		<nav class="navbar navbar-inverse" id="nav">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<a class="navbar-brand" href="/">
+						<h2>Quanter<span style="color:red;">Home</span>
+							<small class="badge">.COM</small>
+						</h2>
+					</a>
+				</div>
+			</div><!-- /.container-fluid -->
+		</nav>
+	</header>
+
+	<div id="page">
+		<ul class="cb-slideshow">
+			<li><span>Image 01</span>
+				<div><h3></h3></div>
+			</li>
+			<li><span>Image 02</span>
+				<div><h3></h3></div>
+			</li>
+			<li><span>Image 03</span>
+				<div><h3></h3></div>
+			</li>
+			<li><span>Image 04</span>
+				<div><h3></h3></div>
+			</li>
+			<li><span>Image 05</span>
+				<div><h3></h3></div>
+			</li>
+			<li><span>Image 06</span>
+				<div><h3></h3></div>
+			</li>
+		</ul>
+
+		<div class="row" id="row">
+
+			<div class="col-xs-3">
+
+			</div>
+
+
+			<div class="col-xs-3">
+				<div class="jumbotron">
+					<h2>量化之家</h2>
+					<br>
+
+					<h3>量化分析爱好者的社区</h3>
+					<p><strong>* 金融知识分享社区</strong></p>
+					<p><strong>* 开启你的量化分析之路</strong></p>
+					<p><strong>* 我们只做最对的投资</strong></p>
+
+					<a class="btn btn-primary btn-lg" href="#" role="button">了解更多</a>
+				</div>
+			</div>
+
+			<div class="col-xs-4">
+				<div class="panel panel-primary">
+					<div class="panel-heading"><h4 class="form-signin-heading">欢迎加入</h4></div>
+					<form action="" method="post" class="form-signin" role="form">
+
+						{{registform.hidden_tag()}}
+
+						<div class="form-group">
+							{{registform.email(size=20, placeholder='请输入您常用的邮箱', class='form-control')}}
+							{% for error in registform.email.errors %}
+							<span style="color: red;">[{{error}}]</span>
+							{% endfor %}
+						</div>
+
+
+						<div class="form-group">
+							{{registform.nickname(size=20, placeholder='请选择一个昵称', class='form-control')}}
+							{% for error in registform.nickname.errors %}
+							<span style="color: red;">[{{error}}]</span>
+							{% endfor %}
+						</div>
+
+
+						<div class="form-group">
+							{{registform.password(size=20, placeholder='请输入密码',class='form-control')}}
+							{% for error in registform.password.errors %}
+							<span style="color: red;">[{{error}}]</span>
+							{% endfor %}
+						</div>
+
+
+						<div class="form-group">
+							{{registform.repeat(size=20, placeholder='请重复密码',class='form-control')}}
+							{% for error in registform.repeat.errors %}
+							<span style="color: red;">[{{error}}]</span>
+							{% endfor %}
+						</div>
+
+						<button class="btn btn-lg btn-primary" type="submit" name="form-name" value="registform">去注册
+						</button>
+					</form>
+				</div>
+
+			</div>
+
+			<div class="col-xs-2">
+
+			</div>
+
+
+		</div>
+
+		<br>
+
+		<div class="row">
+			<div class="col-md-1"></div>
+			<div class="col-md-1"></div>
+			<div class="col-md-1"></div>
+			<div class="col-md-1 texticon">
+				<i class="fa fa-lg fa-home" aria-hidden="true"></i><br>
+				<a class="text-center" href="/people/0">个人中心</a>
+			</div>
+			<div class="col-md-1 texticon">
+				<i class="fa fa-lg fa-comment" aria-hidden="true"></i><br>
+				<a class="text-center" href="/lobby">讨论社区</a>
+			</div>
+			<div class="col-md-1 texticon">
+				<i class="fa fa-lg fa-line-chart" aria-hidden="true"></i><br>
+				<a class="text-center" href="#">数据</a>
+			</div>
+			<div class="col-md-1 texticon">
+				<i class="fa fa-lg fa-rss" aria-hidden="true"></i><br>
+				<a class="text-center" href="#">日报</a>
+			</div>
+			<div class="col-md-1"></div>
+			<div class="col-md-1"></div>
+			<div class="col-md-1"></div>
+			<div class="col-md-1"></div>
+			<div class="col-md-1"></div>
+		</div>
+
+		<br>
+
+	</div>
+</div>
+
+
+<div id="footer">
+
+
+</div>
+
+</body>
+
+
+</html>

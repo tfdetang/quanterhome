@@ -1,0 +1,208 @@
+{% extends "header.html"%}
+
+{% block body %}
+
+
+<style type="text/css">
+
+.head
+{
+margin-top:-25px;
+height:150px;
+background:url({{ url_for('static', filename='images/post-bg2.jpg')}});
+}
+
+#well-nav
+{
+margin-top:-24px;
+height:50px;
+box-shadow: 2px 1px 3px 1px #aaaaaa;
+text-align:center;
+}
+
+.plates
+{
+position: absolute;
+margin: auto;
+left:0px;
+right:0px;
+position: relative;
+margin-top:5px;
+max-width:1200px;
+min-width:800px;
+}
+
+.add-theme
+{
+height:350px;
+border:1px dashed grey;
+font-size:45px;
+text-align:center;
+background:#eee;
+}
+
+.thumbnail
+{
+width:250px;
+}
+
+.favo
+{
+position: relative;
+bottom:0px;
+text-aligen:right
+}
+
+#nav-container
+{
+width:140px;
+}
+
+#nav-pills
+{
+margin-top:-13px;
+font-size: 12px;
+}
+
+</style>
+
+
+<div class="well head">
+
+</div>
+
+{% if session['logged_in'] %}
+
+<div class="well" id="well-nav">
+
+	<div class="container" id="nav-container">
+		<ul class="nav nav-pills" id="nav-pills" role="tablist">
+			{% if type=='all' %}
+			<li role="presentation" class="active"><a href="#">全部</a></li>
+			<li role="presentation"><a href="/lobby?type=favo">收藏</a></li>
+			{% else %}
+			<li role="presentation"><a href="/lobby?type=all">全部</a></li>
+			<li role="presentation" class="active"><a href="#">收藏</a></li>
+			{% endif %}
+		</ul>
+	</div>
+
+</div>
+
+{% endif %}
+
+<div class="plates">
+	<div class="row">
+		{% for theme in themes %}
+
+		<div class="col-md-3">
+			<div class="thumbnail">
+				<a href="/lobby/{{theme.url}}">
+					<img style="height:150px" src="/static/images/upload_theme/{{theme.url}}" alt="...">
+				</a>
+
+				<hr>
+
+				<div class="caption" style="margin-top:-40px; height:175px">
+					<a href="/lobby/{{theme.url}}">
+						<h3>{{theme.name}}</h3>
+					</a>
+					<p>{{theme.introduce}}</p>
+					<p class="text-right">--{{theme.theme_creator.nickname}}</p>
+				</div>
+				{% if session['logged_in'] %}
+				{% if not g.user.is_favoed(theme) %}
+				<a class="btn btn-default btn-xs favo" href="/lobby/favo_{{theme.id}}" role="button">
+					<span class="glyphicon glyphicon glyphicon-star-empty"><strong style="font-size:12px">{{ len(theme.users_favo) }}</strong></span>
+				</a>
+				{% else %}
+				<a class="btn btn-default btn-xs favo" href="/lobby/unfavo_{{theme.id}}" role="button">
+					<span class="glyphicon glyphicon glyphicon-star"><strong style="font-size:12px">{{ len(theme.users_favo) }}</strong></span>
+				</a>
+				{% endif %}
+				{% endif %}
+				&nbsp;文章数量：{{theme.theme_posts.count()}}
+			</div>
+		</div>
+
+		{% endfor %}
+
+		{% if g.user.role == "admin" %}
+
+		<div class="col-md-3">
+			<a type="button" data-toggle="modal" data-target="#modal-create" class="thumbnail add-theme">
+				<span style="top:140px" class="glyphicon glyphicon-plus"></span>
+			</a>
+		</div>
+
+
+		<!-- Modal -->
+		<div class="modal fade" id="modal-create" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+		     aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+								class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="myModalLabel">创建话题</h4>
+					</div>
+					<form class="form-horizontal" action="/lobby/new_theme" enctype="multipart/form-data" method="post"
+					      role="form">
+						<div class="modal-body">
+
+							{{ themeform.hidden_tag() }}
+
+							<div class="form-group">
+								<label for="inputname" class="col-sm-2 control-label">主题名称</label>
+								<div class="col-sm-10">
+									{{ themeform.name(class='form-control', id='inputname') }}
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputurl" class="col-sm-2 control-label">访问地址</label>
+								<div class="col-sm-10" style="text-align:center">
+									<div class="row">
+										<label for="inputurl" class="col-sm-3 control-label">djyqlll.com/lobby/</label>
+										<div class="col-sm-9">
+											{{ themeform.url(class='form-control', id='inputurl') }}
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="form-group">
+								<label for="textintro" class="col-sm-2 control-label">简单介绍</label>
+								<div class="col-sm-10">
+									{{ themeform.introduce(class='form-control', id='textintro') }}
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="file" class="col-sm-2 control-label">封面图片</label>
+								<div class="col-sm-10">
+									{{ themeform.file(id='file') }}
+								</div>
+							</div>
+
+
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button type="submit" name="form-name" value="create-theme" class="btn btn-primary">提交
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		{% endif %}
+
+	</div>
+</div>
+
+
+{% endblock %}
