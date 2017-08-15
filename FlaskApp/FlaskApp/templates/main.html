@@ -6,6 +6,8 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontawesome/4.7.0/css/font-awesome.min.css">
+	<link href="https://cdn.bootcss.com/Buttons/2.0.0/css/buttons.min.css" rel="stylesheet">
+	<script src="https://cdn.bootcss.com/Buttons/2.0.0/js/buttons.min.js"></script>
 	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 	<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
 	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
@@ -34,6 +36,8 @@
 		}
 		$(window).scroll(positionFooter).resize(positionFooter);
 	});
+
+
 
 </script>
 
@@ -105,16 +109,31 @@ margin-right:50px;
 max-width:400px;
 min-width:250px;
 box-shadow: 3px 4px 3px 2px #666666;
+background:  rgba(250, 250, 250, 0.9);
 }
+
 
 form
 {margin-left:40px;
 margin-right:40px;
 margin-top:20px;
-margin-bottom:20px;}
+margin-bottom:20px;
+color:grey}
 
 a:hover{color:#fff;}
 
+li a{
+color:grey
+}
+
+
+.beian{
+float:left;
+height:20px;
+line-height:20px;
+margin: 0px 0px 0px 5px;
+color:#939393;
+}
 
 </style>
 
@@ -159,14 +178,26 @@ a:hover{color:#fff;}
 			</li>
 		</ul>
 
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		{% for message in messages %}
+		<div class="alert alert-warning alert-dismissible" role="alert">
+			<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+					class="sr-only">Close</span></button>
+			<strong>提示!</strong> {{ message }}
+		</div>
+		{% endfor %}
+		{% endif %}
+		{% endwith %}
+
 		<div class="row" id="row">
 
-			<div class="col-xs-3">
+			<div class="col-md-3 hidden-xs hidden-sm">
 
 			</div>
 
 
-			<div class="col-xs-3">
+			<div class="col-md-3 col-xs-6">
 				<div class="jumbotron">
 					<h2>量化之家</h2>
 					<br>
@@ -176,56 +207,108 @@ a:hover{color:#fff;}
 					<p><strong>* 开启你的量化分析之路</strong></p>
 					<p><strong>* 我们只做最对的投资</strong></p>
 
-					<a class="btn btn-primary btn-lg" href="#" role="button">了解更多</a>
+					<a class="button button-plain button-border button-primary button-rounded" href="#" role="button">了解更多</a>
 				</div>
 			</div>
 
-			<div class="col-xs-4">
-				<div class="panel panel-primary">
-					<div class="panel-heading"><h4 class="form-signin-heading">欢迎加入</h4></div>
-					<form action="" method="post" class="form-signin" role="form">
+			<div class="col-md-4 col-xs-7">
+				<div class="panel panel-default">
 
-						{{registform.hidden_tag()}}
+					<div>
 
-						<div class="form-group">
-							{{registform.email(size=20, placeholder='请输入您常用的邮箱', class='form-control')}}
-							{% for error in registform.email.errors %}
-							<span style="color: red;">[{{error}}]</span>
-							{% endfor %}
+						<!-- Nav tabs -->
+						<ul class="nav nav-tabs" role="tablist">
+							<li role="presentation" class="active"><a href="#login" aria-controls="login" role="tab"
+							                                          data-toggle="tab"><strong>登陆</strong></a></li>
+							<li role="presentation"><a href="#register" aria-controls="register" role="tab"
+							                           data-toggle="tab"><strong>注册</strong></a></li>
+						</ul>
+
+						<!-- Tab panes -->
+						<div class="tab-content">
+							<div role="tabpanel" class="tab-pane active" id="login">
+								<form action="" method="post" class="form-signin" role="form">
+
+									{{loginform.hidden_tag()}}
+
+									<div class="form-group">
+										<span>请输入您注册时使用的电子邮箱:</span><br>
+										{{loginform.email(size=20, placeholder='', class='form-control')}}<br>
+										{% for error in loginform.email.errors %}
+										<span style="color: red;">[{{error}}]</span>
+										{% endfor %}
+									</div>
+
+
+									<div class="form-group">
+										<span>请输入您的密码:</span><br>
+										{{loginform.password(size=20, class='form-control')}}<br>
+										{% for error in loginform.password.errors %}
+										<span style="color: red;">[{{error}}]</span>
+										{% endfor %}
+									</div>
+
+
+									<button class="button button-3d button-primary button-rounded" type="submit"
+									        name="form-name"
+									        value="login">
+										登入
+									</button>
+								</form>
+							</div>
+
+							<div role="tabpanel" class="tab-pane" id="register">
+								<form action="" method="post" class="form-signin" role="form">
+
+									{{registform.hidden_tag()}}
+
+									<div class="form-group">
+										{{registform.email(size=20, placeholder='请输入您常用的邮箱', class='form-control')}}
+										{% for error in registform.email.errors %}
+										<span style="color: red;">[{{error}}]</span>
+										{% endfor %}
+									</div>
+
+
+									<div class="form-group">
+										{{registform.nickname(size=20, placeholder='请选择一个昵称', class='form-control')}}
+										{% for error in registform.nickname.errors %}
+										<span style="color: red;">[{{error}}]</span>
+										{% endfor %}
+									</div>
+
+
+									<div class="form-group">
+										{{registform.password(size=20, placeholder='请输入密码',class='form-control')}}
+										{% for error in registform.password.errors %}
+										<span style="color: red;">[{{error}}]</span>
+										{% endfor %}
+									</div>
+
+
+									<div class="form-group">
+										{{registform.repeat(size=20, placeholder='请重复密码',class='form-control')}}
+										{% for error in registform.repeat.errors %}
+										<span style="color: red;">[{{error}}]</span>
+										{% endfor %}
+									</div>
+
+									<button class="button button-3d button-primary button-rounded" type="submit"
+									        name="form-name"
+									        value="registform">去注册
+									</button>
+								</form>
+							</div>
 						</div>
 
-
-						<div class="form-group">
-							{{registform.nickname(size=20, placeholder='请选择一个昵称', class='form-control')}}
-							{% for error in registform.nickname.errors %}
-							<span style="color: red;">[{{error}}]</span>
-							{% endfor %}
-						</div>
+					</div>
 
 
-						<div class="form-group">
-							{{registform.password(size=20, placeholder='请输入密码',class='form-control')}}
-							{% for error in registform.password.errors %}
-							<span style="color: red;">[{{error}}]</span>
-							{% endfor %}
-						</div>
-
-
-						<div class="form-group">
-							{{registform.repeat(size=20, placeholder='请重复密码',class='form-control')}}
-							{% for error in registform.repeat.errors %}
-							<span style="color: red;">[{{error}}]</span>
-							{% endfor %}
-						</div>
-
-						<button class="btn btn-lg btn-primary" type="submit" name="form-name" value="registform">去注册
-						</button>
-					</form>
 				</div>
 
 			</div>
 
-			<div class="col-xs-2">
+			<div class="col-md-2 hidden-xs hidden-sm">
 
 			</div>
 
@@ -235,30 +318,32 @@ a:hover{color:#fff;}
 		<br>
 
 		<div class="row">
-			<div class="col-md-1"></div>
-			<div class="col-md-1"></div>
-			<div class="col-md-1"></div>
-			<div class="col-md-1 texticon">
-				<i class="fa fa-lg fa-home" aria-hidden="true"></i><br>
-				<a class="text-center" href="/people/0">个人中心</a>
+			<div class="col-md-4 hidden-xs hidden-sm"></div>
+
+			<div class="col-md-4 col-xs-12">
+
+				<div class="row">
+
+					<div class="col-xs-4 texticon">
+						<a class="button button-primary button-box button-giant button-longshadow-right" href="#"><i
+								class="fa fa-lg fa-rss" aria-hidden="true"></i></a><br>
+						<p class="text-center">日报</p>
+					</div>
+					<div class="col-xs-4 texticon">
+						<a class="button button-action button-box button-giant button-longshadow-right" href="/lobby"><i
+								class="fa fa-lg fa-comment" aria-hidden="true"></i></a><br>
+						<p class="text-center">讨论社区</p>
+					</div>
+					<div class="col-xs-4 texticon">
+						<a class="button button-caution button-box button-giant button-longshadow-right"
+						   href="/quota/nxb"><i
+								class="fa fa-lg fa-line-chart" aria-hidden="true"></i></a><br>
+						<p class="text-center">数据</p>
+					</div>
+				</div>
 			</div>
-			<div class="col-md-1 texticon">
-				<i class="fa fa-lg fa-comment" aria-hidden="true"></i><br>
-				<a class="text-center" href="/lobby">讨论社区</a>
-			</div>
-			<div class="col-md-1 texticon">
-				<i class="fa fa-lg fa-line-chart" aria-hidden="true"></i><br>
-				<a class="text-center" href="#">数据</a>
-			</div>
-			<div class="col-md-1 texticon">
-				<i class="fa fa-lg fa-rss" aria-hidden="true"></i><br>
-				<a class="text-center" href="#">日报</a>
-			</div>
-			<div class="col-md-1"></div>
-			<div class="col-md-1"></div>
-			<div class="col-md-1"></div>
-			<div class="col-md-1"></div>
-			<div class="col-md-1"></div>
+
+			<div class="col-md-4 hidden-xs hidden-sm"></div>
 		</div>
 
 		<br>
@@ -268,6 +353,62 @@ a:hover{color:#fff;}
 
 
 <div id="footer">
+
+	<footer class="footer" style="background: rgba(20, 20, 20, 0.3);">
+		<div class="container" style="color:white">
+			<div class="row footer-top">
+
+				<div class="col-sm-6 col-lg-6">
+					<h4>
+						矿工之家
+					</h4>
+					<p>本网站由骨头汤开发与维护，代码托管在<a href="https://git.coding.net/tfdetang/quanthome.git" target="_blank"
+					                        style="color:grey">Coding.net</a>
+						。欢迎有兴趣的朋友一起来维护</p>
+				</div>
+				<div class="col-sm-6  col-lg-5 col-lg-offset-1">
+					<div class="row about">
+						<div class="col-xs-3">
+							<h4>关于</h4>
+							<ul class="list-unstyled">
+								<li><a href="#">关于作者</a></li>
+								<li><a href="#">广告合作</a></li>
+								<li><a href="#">友情链接</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-3">
+							<h4>联系方式</h4>
+							<ul class="list-unstyled">
+								<li><a href="mailto:weikun.t@gmail.com">电子邮件</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-3">
+							<h4>赞助商</h4>
+							<ul class="list-unstyled">
+								<li><a href="http://jme.com" target="_blank">大圆银泰</a></li>
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="row footer-bottom">
+				<ul class="list-inline text-center">
+					<li><a href="http://www.miibeian.gov.cn/" target="_blank"
+					       style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+						<p class="beian">
+							苏ICP备17037843号-1</p></a>
+					</li>
+					<li><a target="_blank"
+					       href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010202010316"
+					       style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src=""
+					                                                                                            style="float:left;"/>
+						<p class="beian">苏公网安备
+							32010202010316号</p></a></li>
+				</ul>
+			</div>
+		</div>
+	</footer>
 
 
 </div>

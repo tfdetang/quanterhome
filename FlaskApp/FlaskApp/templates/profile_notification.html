@@ -19,13 +19,13 @@ margin-top:-150px;
 left:0px;
 right:0px;
 max-width:1200px;
-min-width:800px;
+min-width:400px;
 }
 
 .history
 {
 max-width:800px;
-min-width:600px;
+min-width:400px;
 }
 
 blockquote{
@@ -180,6 +180,7 @@ box-shadow: 2px 1px 3px 1px #aaaaaa;
 				{% if g.user.id == user.id %}
 				<hr>
 				<a href="#" class="list-group-item  active">消息</a>
+				<a href="/people/drafts" class="list-group-item">草稿</a>
 				<a href="/people/edit" class="list-group-item">修改资料</a>
 				<a href="/people/privicy" class="list-group-item">隐私设置</a>
 				{% endif %}

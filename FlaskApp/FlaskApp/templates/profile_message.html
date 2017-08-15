@@ -19,12 +19,12 @@ margin-top:-150px;
 left:0px;
 right:0px;
 max-width:1200px;
-min-width:800px;
+min-width:400px;
 }
 
 .chat {
 max-width:750px;
-min-width:500px;
+min-width:300px;
 }
 
 .bubble{
@@ -101,8 +101,10 @@ min-width:500px;
 							{% endfor %}
 
 						</div>
-						<div class="col-md-2">
-							<button class="btn btn-primary" type="submit" name="form-name" value="message">提交</button>
+						<div class="col-md-3">
+							<button class="button button-rounded button-raised button-action" type="submit"
+							        name="form-name" value="message">提交
+							</button>
 						</div>
 					</form>
 
@@ -171,6 +173,7 @@ min-width:500px;
 				{% if g.user.id == user.id %}
 				<hr>
 				<a href="/people/notify" class="list-group-item active">消息</a>
+				<a href="/people/drafts" class="list-group-item">草稿</a>
 				<a href="/people/edit" class="list-group-item">修改资料</a>
 				<a href="/people/privicy" class="list-group-item">隐私设置</a>
 				{% endif %}

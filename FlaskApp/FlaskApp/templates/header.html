@@ -3,14 +3,18 @@
 <head>
 	<meta charset="UTF-8">
 	<title>矿工之家</title>
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontawesome/4.7.0/css/font-awesome.min.css">
 	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+	<link href="https://cdn.bootcss.com/Buttons/2.0.0/css/buttons.min.css" rel="stylesheet">
+	<script src="https://cdn.bootcss.com/Buttons/2.0.0/js/buttons.min.js"></script>
 	<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
-	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="{{ url_for('static', filename='js/moment.js') }}"></script>
 	<script>moment.locale(['zh-cn']);</script>
+	<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/highlight.js/8.0/styles/github.min.css">
+	<script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
 </head>
 
 <script type="text/javascript">
@@ -34,6 +38,13 @@
 		}
 		$(window).scroll(positionFooter).resize(positionFooter);
 	});
+	hljs.initHighlightingOnLoad();
+
+
+
+
+
+
 
 
 </script>
@@ -59,10 +70,24 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .alert{
-margin-top:-20px;
+margin-top: -20px;
+}
+
+.search{
+color:rgba(255,255,255,0.6);
+background:rgba(255,255,255,0.4);
+min-width:200px;
+border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 
+.beian{
+float:left;
+height:20px;
+line-height:20px;
+margin: 0px 0px 0px 5px;
+color:#939393;
+}
 
 </style>
 
@@ -75,6 +100,11 @@ margin-top:-20px;
 				<!-- Brand and toggle get grouped for better mobile display -->
 				<div class="navbar-header">
 					<a class="navbar-brand" href="/">Quanter<span style="color:red;">Home</span></a>
+					<a class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
 				</div>
 
 				<!-- Collect the nav links, forms, and other content for toggling -->
@@ -96,9 +126,9 @@ margin-top:-20px;
 					<form class="navbar-form navbar-left">
 						<div class="col-lg-6">
 							<div class="input-group">
-								<input type="text" class="form-control" placeholder="我想要找..." style="min-width:200px;">
+								<input type="text" class="form-control search" placeholder="我想要找...">
 								<span class="input-group-btn">
-                          <button class="btn btn-default" type="button">Go!</button>
+                          <button class="btn" type="button">Go!</button>
                       </span>
 							</div><!-- /input-group -->
 						</div>
@@ -152,8 +182,7 @@ margin-top:-20px;
 
 								{% else %}
 								<li><!-- Button trigger modal -->
-									<a href="#" class="glyphicon glyphicon-user" data-toggle="modal"
-									   data-target="#Login">
+									<a href="/login" class="glyphicon glyphicon-user">
 										登入
 									</a>
 								</li>
@@ -173,68 +202,25 @@ margin-top:-20px;
 				</div>
 				<!-- /.navbar-collapse -->
 
-
-				<!-- Modal Login -->
-				<div class="modal fade" id="Login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-										aria-hidden="true">&times;</span></button>
-								<h4 class="modal-title">登入</h4>
-							</div>
-							<div class="modal-body">
-
-								<form action="" method="post">
-									{{loginform.hidden_tag()}}
-									<p>
-										请输入您注册时使用的电子邮箱:<br>
-										{{loginform.email(size=30, placeholder='user@Email.com', class='form-control')}}<br>
-										{% for error in loginform.email.errors %}
-										<span style="color: red;">[{{error}}]</span>
-										{% endfor %}
-									</p>
-
-									<p>
-										请输入您的密码:<br>
-										{{loginform.password(size=30, class='form-control')}}<br>
-										{% for error in loginform.password.errors %}
-										<span style="color: red;">[{{error}}]</span>
-										{% endfor %}
-									</p>
-
-									<p>{{loginform.remember_me}} 记住我</p>
-
-									<div class="modal-footer" style="text-align:left;">
-										<button class="btn btn-lg btn-primary" type="submit" name="form-name"
-										        value="login">
-											登入
-										</button>
-									</div>
-
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-
 			</div><!-- /.container-fluid -->
 		</nav>
 	</header>
 
 
 	<div id="page" class="clearfix">
-		{% with messages = get_flashed_messages() %}
-		{% if messages %}
-		{% for message in messages %}
-		<div class="alert alert-warning alert-dismissible" role="alert">
-			<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
-					class="sr-only">Close</span></button>
-			<strong>提示!</strong> {{ message }}
+		<div>
+			{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			{% for message in messages %}
+			<div class="alert alert-warning alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+						class="sr-only">Close</span></button>
+				<strong>提示!</strong> {{ message }}
+			</div>
+			{% endfor %}
+			{% endif %}
+			{% endwith %}
 		</div>
-		{% endfor %}
-		{% endif %}
-		{% endwith %}
 		{% block body %}
 
 		{% endblock %}
@@ -243,6 +229,7 @@ margin-top:-20px;
 	<br>
 </div>
 
+<br>
 <div id="footer">
 	<footer class="footer" style="background: #eeeeee;">
 		<div class="container">
@@ -252,7 +239,8 @@ margin-top:-20px;
 					<h4>
 						矿工之家
 					</h4>
-					<p>本网站通过Flask开发，代码已经托管到coding.net</p>
+					<p>本网站由骨头汤开发与维护，代码托管在<a href="https://git.coding.net/tfdetang/quanthome.git" target="_blank">Coding.net</a>
+						。欢迎有兴趣的朋友一起来维护</p>
 				</div>
 				<div class="col-sm-6  col-lg-5 col-lg-offset-1">
 					<div class="row about">
@@ -278,7 +266,25 @@ margin-top:-20px;
 						</div>
 					</div>
 
+
 				</div>
+			</div>
+			<hr class="spliter">
+			<div class="row footer-bottom">
+				<ul class="list-inline text-center">
+					<li><a href="http://www.miibeian.gov.cn/" target="_blank"
+					       style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><p
+							class="beian">
+						苏ICP备17037843号-1</p></a>
+					</li>
+					<li><p class="beian">|</p></li>
+					<li><a target="_blank"
+					       href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010202010316"
+					       class="beian"><img src=""
+					                          style="float:left;"/>
+						<p class="beian">苏公网安备
+							32010202010316号</p></a></li>
+				</ul>
 			</div>
 		</div>
 	</footer>

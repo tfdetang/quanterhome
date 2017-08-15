@@ -15,7 +15,7 @@ box-shadow: 2px 1px 3px 1px #aaaaaa;
 }
 
 #chart{
-min-width: 800px;
+min-width: 400px;
 height:600px;
 }
 
@@ -29,10 +29,10 @@ height:600px;
 	<div class="col-md-2">
 
 
-		<div class="list-group">
+		<div class="button-group">
 
-			<a href="#" class="list-group-item active">涨跌宝历史</a>
-			<a href="#" class="list-group-item">涨跌宝实时</a>
+			<a href="#" type="button" class="button active">涨跌宝历史</a>
+			<a href="/quota/zdb_real" type="button" class="button">涨跌宝实时</a>
 		</div>
 
 	</div>
@@ -63,9 +63,9 @@ height:600px;
             animation: false
         }
     },
-    color:['#c23531', '#2f4554','#c23531', '#2f4554'],
+    color:['rgba(194,53,49,0.5)', 'rgba(47,69,84,0.5)', '#3D3D3D','#c23531', '#2f4554'],
     legend: {
-        data:['看涨','看跌','买涨收入','买跌收入'],
+        data:['看涨','看跌','K值','买涨收入','买跌收入'],
         x: 'left'
     },
     toolbox: {
@@ -120,8 +120,14 @@ height:600px;
     ],
     yAxis : [
         {
-            name : '比率',
+            name : '总量',
             type : 'value'
+        },
+        {
+            name : 'K值',
+            type : 'value',
+            min : 0.1,
+            max : 2
         },
         {
             gridIndex: 1,
@@ -134,31 +140,41 @@ height:600px;
             name:'看涨',
             type:'bar',
             stack:'数量',
-            label: {
-                emphasis: {
-                    show: true,
-                    position:'top'
-                }
-            },
             data: data.data.amount_up
         },
         {
             name:'看跌',
             type:'bar',
             stack:'数量',
+            data: data.data.amount_down
+        },
+        {
+            name:'K值',
+            type:'line',
+            yAxisIndex: 1,
             label: {
-                emphasis: {
+                normal: {
                     show: true,
-                    position:'bottom'
+                    position: 'top',
+                },
+            },
+
+            lineStyle: {
+                normal: {
+                    width: 3,
+                    shadowColor: 'rgba(0,0,0,0.4)',
+                    shadowBlur: 5,
+                    shadowOffsetY: 5
                 }
             },
-            data: data.data.amount_down
+
+            data: data.data.ratio
         },
         {
             name:'买涨收入',
             type:'line',
             xAxisIndex: 1,
-            yAxisIndex: 1,
+            yAxisIndex: 2,
             hoverAnimation: false,
             areaStyle:{normal:{}},
             data: data.data.up_gain
@@ -167,7 +183,7 @@ height:600px;
             name:'买跌收入',
             type:'line',
             xAxisIndex: 1,
-            yAxisIndex: 1,
+            yAxisIndex: 2,
             hoverAnimation: false,
             areaStyle:{normal:{}},
             data: data.data.down_gain

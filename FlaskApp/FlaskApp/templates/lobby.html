@@ -5,11 +5,23 @@
 
 <style type="text/css">
 
-.head
+#hero
 {
 margin-top:-25px;
-height:150px;
-background:url({{ url_for('static', filename='images/post-bg2.jpg')}});
+height:350px;
+color:white;
+background:url({{ url_for('static', filename='images/index-bg.jpg')}});
+}
+
+.carousel-indicators
+{
+position: relative;
+bottom: -300px;
+}
+
+.carousel-inner
+{
+margin-top:60px;
 }
 
 #well-nav
@@ -27,14 +39,24 @@ margin: auto;
 left:0px;
 right:0px;
 position: relative;
-margin-top:5px;
+margin-top:30px;
 max-width:1200px;
-min-width:800px;
+}
+
+.card
+{
+position: absolute;
+margin: auto;
+left:0px;
+right:0px;
+position: relative;
+width:250px;
 }
 
 .add-theme
 {
-height:350px;
+height:300px;
+width:220px;
 border:1px dashed grey;
 font-size:45px;
 text-align:center;
@@ -43,7 +65,7 @@ background:#eee;
 
 .thumbnail
 {
-width:250px;
+max-width:250px;
 }
 
 .favo
@@ -53,49 +75,63 @@ bottom:0px;
 text-aligen:right
 }
 
-#nav-container
-{
-width:140px;
-}
-
-#nav-pills
-{
-margin-top:-13px;
-font-size: 12px;
-}
 
 </style>
 
 
-<div class="well head">
+<div id="hero" class="hero-section">
 
-</div>
+	<div id="hero-carousel" class="hero-carousel carousel carousel-fade slide" data-ride="carousel"
+	     data-interval="10000">
 
-{% if session['logged_in'] %}
+		<!-- Indicators -->
+		<ol class="carousel-indicators">
+			<li class="active" data-slide-to="0" data-target="#hero-carousel"></li>
+			<li data-slide-to="1" data-target="#hero-carousel"></li>
+		</ol>
 
-<div class="well" id="well-nav">
+		<!-- Wrapper for slides -->
+		<div class="carousel-inner">
 
-	<div class="container" id="nav-container">
-		<ul class="nav nav-pills" id="nav-pills" role="tablist">
-			{% if type=='all' %}
-			<li role="presentation" class="active"><a href="#">全部</a></li>
-			<li role="presentation"><a href="/lobby?type=favo">收藏</a></li>
-			{% else %}
-			<li role="presentation"><a href="/lobby?type=all">全部</a></li>
-			<li role="presentation" class="active"><a href="#">收藏</a></li>
-			{% endif %}
-		</ul>
-	</div>
+			<div class="item item-1 active">
+				<div class="item-content container">
+					<div class="item-content-inner">
 
-</div>
+						<h2 class="heading">听说你想搞个大新闻？ <br class="hidden-xs">为您推送最新的金融与量化新闻</h2>
+						<p class="intro">全网征集金融与量化相关的投稿，选入日报可以获得QuantHome送出的独家礼品哦！！！</p>
+						<a class="button button-plain button-border button-primary button-rounded"
+						   href="#"
+						   target="_blank">敬请期待</a>
 
-{% endif %}
+					</div><!--//item-content-inner-->
+				</div><!--//item-content-->
+			</div><!--//item-->
 
-<div class="plates">
+			<div class="item item-2">
+				<div class="item-content container">
+					<div class="item-content-inner">
+
+						<h2 class="heading">全新改版行情页面</h2>
+						<p class="intro">全新改版牛熊宝行情数据页面，采用卡片式设计，对手机兼容性更好</p>
+						<a class="button button-plain button-border button-primary button-rounded"
+						   href="#"
+						   target="_blank">敬请期待</a>
+
+					</div><!--//item-content-inner-->
+				</div>
+			</div><!--//item-->
+
+		</div><!--//carousel-inner-->
+
+	</div><!--//carousel-->
+</div><!--//hero-->
+
+
+<div class="plates container-fluid">
 	<div class="row">
 		{% for theme in themes %}
 
-		<div class="col-md-3">
+		<div class="col-xs-3 card">
 			<div class="thumbnail">
 				<a href="/lobby/{{theme.url}}">
 					<img style="height:150px" src="/static/images/upload_theme/{{theme.url}}" alt="...">
@@ -103,12 +139,11 @@ font-size: 12px;
 
 				<hr>
 
-				<div class="caption" style="margin-top:-40px; height:175px">
+				<div class="caption" style="margin-top:-40px; height:125px">
 					<a href="/lobby/{{theme.url}}">
 						<h3>{{theme.name}}</h3>
 					</a>
 					<p>{{theme.introduce}}</p>
-					<p class="text-right">--{{theme.theme_creator.nickname}}</p>
 				</div>
 				{% if session['logged_in'] %}
 				{% if not g.user.is_favoed(theme) %}
@@ -129,7 +164,7 @@ font-size: 12px;
 
 		{% if g.user.role == "admin" %}
 
-		<div class="col-md-3">
+		<div class="col-xs-3">
 			<a type="button" data-toggle="modal" data-target="#modal-create" class="thumbnail add-theme">
 				<span style="top:140px" class="glyphicon glyphicon-plus"></span>
 			</a>

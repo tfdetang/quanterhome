@@ -25,6 +25,7 @@ class Utils:
         db.session.merge(self)
         db.session.commit()
 
+
 # ----------------------------------------------Associate_obj-------------------------------
 
 
@@ -105,6 +106,7 @@ class User(Base, Utils, db.Model,UserMixin):
                             backref = backref('followers', lazy='dynamic'),
                             lazy='dynamic')
     post = relationship('Post', backref ='author', lazy ='dynamic')
+    draft = relationship('Draft', backref='author', lazy='dynamic')
     post_like = relationship('Post',
                               secondary='like_post',
                               backref='liked_user', lazy='dynamic')
@@ -145,6 +147,11 @@ class User(Base, Utils, db.Model,UserMixin):
             self.followed.remove(user)
             self.save()
             return self
+
+    def del_draft(self, draft):
+        self.draft.remove(draft)
+        self.save()
+        return self
 
     def is_following(self, user):
         return self.followed.filter(follower.c.followed_id==user.id).count() > 0
@@ -328,6 +335,36 @@ class Post(Base, db.Model,Utils):
         return '<Post %s>' % self.id
 
 
+class Daily(Base, db.Model, Utils):
+    __tablename__ = 'daily'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(45))
+    abstract = Column(Text)
+    body = Column(Text)
+    Cover = Column(Text)
+    time = Column(String(45))
+    author_id = Column(ForeignKey('user.id'))
+
+    def __repr__(self):
+        return '<Daily %s>' % self.id
+
+
+class Draft(Base, db.Model, Utils):
+    __tablename__ = 'draft'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(45))
+    abstract = Column(Text)
+    body = Column(Text)
+    time_post = Column(String(45))
+    time_update = Column(String(45))
+    author_id = Column(ForeignKey('user.id'))
+
+    def __repr__(self):
+        return '<Draft %s>' % self.id
+
+
 class Label(Base, db.Model,Utils):
 
     __tablename__ = 'label'
@@ -385,6 +422,7 @@ if __name__ == '__main__':
                            pool_recycle=20)
     session_factory = sessionmaker(bind=engine)
     DBSession = scoped_session(session_factory)
-    Base.metadata.drop_all(engine)
+    if app.config['DROP_ALL']:
+        Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 

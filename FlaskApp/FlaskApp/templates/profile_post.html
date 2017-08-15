@@ -19,7 +19,7 @@ margin-top:-150px;
 left:0px;
 right:0px;
 max-width:1200px;
-min-width:800px;
+min-width:400px;
 }
 
 
@@ -115,14 +115,11 @@ min-width:800px;
 					{% for post in posts %}
 
 					<div class="media-right">
-						<a class="media-left" href="/people/{{post.author.id}}" target="_blank">
-							<img style="width:49px;" class="media-object"
-							     src="{{ url_for('homepage')}}{{ post.author.avatar }}" alt=" ">
-						</a>
+
 						<div class="media-body">
 							<h4 class="media-heading">
-								<a href="/topic/{{ post.id }}/1">{{ post.title }}</a> <br>
-								<small>by: {{ post.author.nickname }} &nbsp 发表时间:{{ post.time_post }} &nbsp <span
+								<a href="/topic/{{ post.id }}">{{ post.title }}</a> <br>
+								<small> 发表时间:{{ post.time_post }} &nbsp <span
 										class="glyphicon glyphicon-tag"></span>
 									{% for tag in post.post_tags%}
 
@@ -164,6 +161,7 @@ min-width:800px;
 				{% if g.user.id == user.id %}
 				<hr>
 				<a href="/people/notify" class="list-group-item">消息</a>
+				<a href="/people/drafts" class="list-group-item">草稿</a>
 				<a href="/people/edit" class="list-group-item">修改资料</a>
 				<a href="/people/privicy" class="list-group-item">隐私设置</a>
 				{% endif %}

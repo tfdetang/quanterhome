@@ -23,7 +23,7 @@ margin-top:-120px;
 left:0px;
 right:0px;
 max-width:1000px;
-min-width:800px;
+min-width:400px;
 }
 
 .Title
@@ -39,7 +39,7 @@ font-size:35px;
 
 </div>
 
-<form class="editor" action="/{{theme.url}}/post" method="post" role="form">
+<form class="editor" action="" method="post" role="form" name="editor">
 	<div class="Title">发起主题:</div>
 
 	<div class="input-group">
@@ -57,10 +57,15 @@ font-size:35px;
 	</script>
 	<br>
 	<div class="text-right">
-		<button class="btn btn-lg btn-primary" type="submit" name="theme-id" value="{{theme.id}}">提交</button>
-		<a class="btn btn-lg btn-default" href="/lobby/{{theme.url}}">返回</a>
+		<button class="button button-3d button-action button-rounded" type="submit" name="theme-id" value="{{theme.id}}"
+		        onclick="editor.action='/{{theme.url}}/post'; editor.submit()">提交
+		</button>
+		<button class="button button-3d button-primary button-rounded" type="submit" name="theme-id"
+		        value="{{theme.id}}"
+		        onclick="editor.action='/people/save_draft'; editor.submit()">保存草稿
+		</button>
+		<a class="button button-3d button-rounded" href="/lobby/{{theme.url}}">返回</a>
 	</div>
-
 </form>
 
 
