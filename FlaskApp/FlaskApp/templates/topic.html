@@ -1,532 +1,528 @@
-{% extends "header.html"%}
+{% extends "header.html" %}
 
 {% block body %}
 
-<style type="text/css">
-
-.navlink
-{
-font-size:16px;
-font-weight:500;
-margin-top:20px;
-max-width:1000px;
-min-width:400px;
-}
-
-.Title
-{
-margin: auto;
-left:0px;
-right:0px;
-position: relative;
-margin-top:50px;
-text-align:left;
-}
-
-#container
-{
-max-width:1600px;
-min-width:400px;
-}
-
-.paper
-{
-background-color:White;
-z-index:1000;
-}
-
-#mark-html img{
-max-width:700px;
-position:relative;
-display:block;
-margin: 0 auto;
-box-shadow: 2px 1px 3px 1px #aaaaaa;
-}
-
-.media-body img{
-max-width:500px;
-}
-
-.content
-{position: relative;
-margin-bottom:20px;
-}
-
-.author
-{
-position: relative;
-}
-
-.author-icon
-{
-width:60px;
-text-align:center;
-font-size:16px;
-}
-
-.comment-author
-{
-text-align:left;
-font-size:20px;
-}
-
-.comment-area
-{
-left:0px;
-right:0px;
-position: relative;
-}
-
-.comment
-{
-position: relative;
-}
-
-.modal
-{
-top:200px;
-}
-
-.spliter {
-    border: 0;
-    height: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.pagination
-{
-position: relative;
-margin: auto;
-}
-
-.toc{
-position: absolute;
-left:20px;
-max-width:300px;
-min-width:150px;
-}
-
-
-
-
-
-
-
-
-</style>
-
-<div class="row">
-
-	<div class="col-md-2">
-
-	</div>
-
-	<div class="col-md-4">
-
-		<div class="navlink">
-			<a style="color:grey" href="/lobby">大厅</a> /
-			<a style="color:black" href="/lobby/{{post.post_theme.url}}">{{post.post_theme.name}}</a>
-		</div>
-
-	</div>
-
-</div>
-
-<div class="row">
-	<div class="col-md-2">
-
-	</div>
-
-
-	<div class="col-md-6 col-xs-10">
-		<div class="Title">
-			<h2>{{post.title}}</h2>
-			<p>最后编辑于:{{post.time_update}}
-				{% if session.id == post.author.id %}
-				<a href="/{{post.id}}/editor"><span
-						class="glyphicon glyphicon-pencil">编辑</span></a></p>
-			{% endif %}
-			<div class="container-fluid">
-
-
-				{% for tag in post.post_tags%}
-
-				{% if tag.user_id == post.author.id %}
-				<span class="label label-primary">{{tag.label.name}}</span>
-				{% else %}
-				<span class="label label-default">{{tag.label.name}}</span>
-				{% endif %}
-
-				{% endfor %}
-
-				{% if session['logged_in'] %}
-
-				<a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
-				   type="button" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-plus"></span></a>
-
-				{% if session.id == post.author.id %}
-
-				{% endif %}
-				{% endif %}
-
-				<div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
-					<br>
-					<form class="form-inline" action="/topic/{{post.id}}/{{page}}/add_tag" role="form">
-						<div class="input-group">
-							<input name="tag" type="text" size="7" class="form-control">
-							<span class="input-group-btn"><button class="btn btn-default" type="submit" name="form-name"
-							                                      value="tag"><span
-									class="glyphicon glyphicon-tag"></span></button></span>
-						</div>
-					</form>
-
-				</div>
-
-			</div>
-		</div>
-	</div>
-
-	<div class="col-md-2 hidden-xs hidden-sm">
-		<div class="row">
-			<div class="col-xs-4">
-				<div class="author">
-					<img class="author-icon" src="{{ url_for('homepage')}}{{ post.author.avatar }}">
-					<br>
-					<p class="author-icon"><a href="/people/{{post.author.id}}"
-					                          target="_blank">{{post.author.nickname}}</a></p>
-				</div>
-			</div>
-
-			<div class="col-xs-8">
-				<div class="author">
-					<h5>发表:
-						<small><span class="glyphicon glyphicon-list-alt"></span> {{post.author.post.count()}}
-							文章&nbsp&nbsp
-						</small>
-					</h5>
-					<h5>获得:
-						<small><span class="glyphicon glyphicon-thumbs-up"></span> {{post.author.count_like()}} 赞赏
-						</small>
-					</h5>
-				</div>
-				<div>
-					{% if session['logged_in'] %}
-					{% if g.user.id != post.author.id %}
-					{% if g.user.is_following(post.author) %}
-					<a type="button" href="/people/{{post.author.id}}/unfollow" class="btn-sm btn-danger"><span
-							class="glyphicon glyphicon-minus"></span>取消关注</a>
-					{% else %}
-					<a type="button" href="/people/{{post.author.id}}/follow" class="btn-sm btn-success"><span
-							class="glyphicon glyphicon-plus"></span>关注</a>
-					{% endif %}
-					{% endif %}
-					{% endif %}
-				</div>
-			</div>
-		</div>
-
-	</div>
-</div>
-
-
-<div class="toc col-md-4 bs-docs-sidebar hidden-print hidden-xs hidden-sm" role="complementary" id="float">
-	<ul class="nav bs-docs-sidenav">
-		<li><a href="#"><span class="glyphicon glyphicon-eject"> 返回标题</span></a></li>
-		{{TOC}}
-		<li><a href="#comment-area"><span class="glyphicon glyphicon-comment"> 查看评论</span></a></li>
-	</ul>
-</div>
-
-<script>
-		$.fn.smartFloat = function() {
-		    var position = function(element) {
-		        var top = element.position().top, pos = element.css("position");
-		        $(window).scroll(function() {
-		            var scrolls = $(this).scrollTop();
-		            if (scrolls > top) {
-		                if (window.XMLHttpRequest) {
-		                    element.css({
-		                        position: "fixed",
-		                        top: 0
-		                    });
-		                } else {
-		                    element.css({
-		                        top: scrolls
-		                    });
-		                }
-		            }else {
-		                element.css({
-		                    position: "absolute",
-		                    top: top
-		                });
-		            }
-		        });
-		    };
-		    return $(this).each(function() {
-		        position($(this));
-		    });
-		};
-		$("#float").smartFloat();
-		$(".content").scrollspy({target:'#float'})
-
-
-
-
-
-
-
-
-
-
-
-
-</script>
-
-<div class="row">
-	<div class="col-md-2 hidden-xs hidden-sm"></div>
-	<div class="col-md-6 col-xs-12" id="container">
-
-		<div class="paper"> &nbsp&nbsp
-
-			<hr>
-
-
-			<div class="content">
-
-				<div id="mark-html">
-
-					{{body}}
-
-				</div>
-
-				{% if session['logged_in'] %}
-
-				<div class="text-right" style="margin-right:14px;" id="like-area">
-
-					{% if g.user == post.author %}
-
-					<button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
-							class="glyphicon glyphicon-thumbs-up">:{{post.liked_count()['like']}}</span></button>
-					<button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
-							class="glyphicon glyphicon-thumbs-down">:{{post.liked_count()['dislike']}}</span></button>
-
-					{% elif post.is_liked(g.user) %}
-
-					{% if post.liked_value(g.user) == 0 %}
-
-					<button type="submit" class="btn btn-sm btn-primary" disabled="disabled"><span
-							class="glyphicon glyphicon-thumbs-up">:{{post.liked_count()['like']}}</span></button>
-					<button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
-							class="glyphicon glyphicon-thumbs-down">:{{post.liked_count()['dislike']}}</span></button>
-					{% else %}
-					<button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
-							class="glyphicon glyphicon-thumbs-up">:{{post.liked_count()['like']}}</span></button>
-					<button type="submit" class="btn btn-sm btn-primary" disabled="disabled"><span
-							class="glyphicon glyphicon-thumbs-down">:{{post.liked_count()['dislike']}}</span></button>
-
-					{% endif %}
-
-					{% else %}
-					<form action="/topic/{{post.id}}/{{page}}/like" role="form">
-						<button type="submit" class="btn btn-sm btn-default" name="value" value=0><span
-								class="glyphicon glyphicon-thumbs-up">:{{post.liked_count()['like']}}</span></button>
-						<button type="submit" class="btn btn-sm btn-default" name="value" value=1><span
-								class="glyphicon glyphicon-thumbs-down">:{{post.liked_count()['dislike']}}</span>
-						</button>
-					</form>
-					{% endif %}
-
-
-					{% if len(post.user_like.all()) > 0 %}
-					<div>
-						<br>
-						{% for user_like in post.user_like.limit(5).all() %}
-
-						<a href="/people/{{user_like.id}}"><img style="width:30px"
-						                                        src="{{ url_for('homepage')}}{{ user_like.avatar }}"></a>
-
-						{% endfor %} 最近评价过
-					</div>
-					{% endif %}
-
-				</div>
-
-				<hr>
-				<br>
-
-				<div class="row">
-					<div class="col-md-1 hidden-xs hidden-sm comment-author">
-						<img style="width:45px" src="{{ url_for('homepage')}}{{ g.user.avatar }}">
-					</div>
-					<form class="editor" action="/topic/{{post.id}}/{{page}}/comment" method="post" role="form">
-						{{ commentform.hidden_tag() }}
-						<div class="col-xs-7">
-
-							{{commentform.body(rows=2, class='form-control')}}
-							{% for error in commentform.body.errors %}
-							{{error}}
-							{% endfor %}
-
-						</div>
-						<div class="col-mx-4">
-							<button class="button button-rounded button-raised button-action" type="submit"
-							        name="form-name" value="comment">提交
-							</button>
-						</div>
-					</form>
-				</div>
-				{% else %}
-
-				<div class="text-right" style="margin-right:14px;" id="like-area">
-
-					<button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
-							class="glyphicon glyphicon-thumbs-up">:{{post.liked_count()['like']}}</span></button>
-					<button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
-							class="glyphicon glyphicon-thumbs-down">:{{post.liked_count()['dislike']}}</span></button>
-					{% if len(post.user_like.all()) > 0 %}
-					<div>
-						<br>
-						{% for user_like in post.user_like.limit(5).all() %}
-
-						<img style="width:30px" src="{{ url_for('homepage')}}{{ user_like.avatar }}">
-
-						{% endfor %} 最近评价过
-					</div>
-					{% endif %}
-
-				</div>
-
-				<hr>
-				<br>
-
-				<div class="row">
-					<div class="col-md-1 hidden-xs hidden-sm comment-author">
-						<img style="width:45px" src="{{ url_for('homepage')}}static/avatar/x.png">
-					</div>
-					<div class="col-xs-7">
-
-						<textarea name="title" rows="2" placeholder="请登陆后评论" class='form-control' disabled></textarea>
-
-					</div>
-					<div class="col-xs-4">
-						<a class="button button-rounded button-raised" href="{{ url_for('login_page') }}">登陆</a>
-					</div>
-				</div>
-
-				{% endif %}
-			</div>
-			&nbsp&nbsp
-		</div>
-
-
-		<div class="comment-area well" id="comment-area">
-			<hr class="spliter">
-
-			{% if comments == [] %}
-
-			目前还没有人评论哦～～～
-
-			{% else %}
-
-
-			{% for comment in comments %}
-
-			<div class="media-left comment">
-				<a class="media-left" href="/people/{{comment.commented_user.id}}" target="_blank">
-					<img style="width:45px;" class="media-object"
-					     src="{{ url_for('homepage')}}{{ comment.commented_user.avatar }}" alt=" ">
-				</a>
-				<div class="media-body">
-					<h4 class="media-heading">
-						<a href="/people/{{comment.commented_user.id}}">{{ comment.commented_user.nickname }}</a>
-						<small>&nbsp{{ momentjs(comment.time_comment).fromNow() }} &nbsp</small>
-					</h4>
-					<div>{{ Markup(markdown(comment.body)) }}</div>
-					{% if session['logged_in'] %}
-					<a type="button" data-toggle="modal"
-					   data-target="#myModal{{comment.id}}"> 回复</a>
-					{% endif %}
-
-					{% if comment.replies.all() %}
-
-					<blockquote style="font-size:14px">
-						{% for reply in comment.replies.all() %}
-
-						<div class="media-left reply">
-							<div class="media-body">
-								<h5 class="media-heading"><a href="/people/{{reply.commented_user.id}}">
-									{{reply.commented_user.nickname }}</a>
-									<small>{{ momentjs(reply.time_comment).fromNow() }}</small>
-								</h5>
-								{{ Markup(markdown(reply.body)) }}
-							</div>
-						</div>
-						<br>
-						{% endfor %}
-						<a type="button" class="glyphicon glyphicon-comment" data-toggle="modal"
-						   data-target="#myModal{{comment.id}}"> 添加评论</a>
-					</blockquote>
-					{% endif %}
-
-				</div>
-				<!-- Button trigger modal -->
-
-				<!-- Modal -->
-				<div class="modal fade" id="myModal{{comment.id}}" tabindex="-1" role="dialog"
-				     aria-labelledby="myModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal"><span
-										aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-								<h4 class="modal-title" id="myModalLabel">回复: {{ comment.commented_user.nickname }} <img
-										style="width:40px"
-										src="{{ url_for('homepage')}}{{ comment.commented_user.avatar }}"></h4>
-							</div>
-							<div class="modal-body">
-								{{ comment.body }}
-							</div>
-							<div class="modal-footer">
-								<form class="editor" action="/topic/{{post.id}}/{{page}}/reply" method="post"
-								      role="form">
-									{{ commentform.hidden_tag() }}
-									<div class="col-md-9">
-
-										{{commentform.body(rows=2, class='form-control')}}
-										{% for error in commentform.body.errors %}
-										{{error}}
-										{% endfor %}
-
-									</div>
-									<div class="col-md-2">
-										<button class="btn btn-lg btn-success" type="submit" name="reply"
-										        value={{comment.id}}>提交
-										</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<hr class="spliter">
-			{% endfor %}
-			<nav class="page" style="text-align:center">
-				<ul class="pagination pagination-sm">
-					<li><a href="/topic/{{ post.id }}?page=1#comment-area">&laquo;</a></li>
-					{% for i in page_info[:-1] %}
-					<li class="{{i['active']}}"><a
-							href="/topic/{{ post.id }}?page={{i['page']}}#comment-area">{{i['page']}}</a></li>
-					{% endfor %}
-					<li><a href="/topic/{{ post.id }}?page={{page_info[-1]['page']}}#comment-area">&raquo;</a></li>
-				</ul>
-			</nav>
-
-			{% endif %}
-		</div>
-	</div>
-	<div class="col-md-2 hidden-xs hidden-sm"></div>
-</div>
+    <style type="text/css">
+
+        .navlink {
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 20px;
+            max-width: 1000px;
+            min-width: 400px;
+        }
+
+        .Title {
+            margin: auto;
+            left: 0px;
+            right: 0px;
+            position: relative;
+            margin-top: 50px;
+            text-align: left;
+        }
+
+        #container {
+            max-width: 1600px;
+            min-width: 400px;
+        }
+
+        .paper {
+            background-color: White;
+            z-index: 1000;
+        }
+
+        #mark-html img {
+            max-width: 700px;
+            position: relative;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
+
+        .media-body img {
+            max-width: 500px;
+        }
+
+        .content {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .author {
+            position: relative;
+        }
+
+        .author-icon {
+            width: 60px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .comment-author {
+            text-align: left;
+            font-size: 20px;
+        }
+
+        .comment-area {
+            left: 0px;
+            right: 0px;
+            position: relative;
+        }
+
+        .comment {
+            position: relative;
+        }
+
+        .modal {
+            top: 200px;
+        }
+
+        .spliter {
+            border: 0;
+            height: 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .pagination {
+            position: relative;
+            margin: auto;
+        }
+
+        .toc {
+            position: absolute;
+            left: 20px;
+            max-width: 300px;
+            min-width: 150px;
+        }
+
+
+    </style>
+
+    <div class="row">
+
+        <div class="col-md-2">
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="navlink">
+                <a style="color:grey" href="/lobby">大厅</a> /
+                <a style="color:black" href="/lobby/{{ post.post_theme.url }}">{{ post.post_theme.name }}</a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-2">
+
+        </div>
+
+
+        <div class="col-md-6 col-xs-10">
+            <div class="Title">
+                <h2>{{ post.title }}</h2>
+                <p>最后编辑于:{{ post.time_update }}
+                    {% if session.id == post.author.id %}
+                        <a href="/{{ post.id }}/editor"><span
+                                class="glyphicon glyphicon-pencil">编辑</span></a></p>
+                    {% endif %}
+                <div class="container-fluid">
+
+
+                    {% for tag in post.post_tags %}
+
+                        {% if tag.user_id == post.author.id %}
+                            <span class="label label-primary">{{ tag.label.name }}</span>
+                        {% else %}
+                            <span class="label label-default">{{ tag.label.name }}</span>
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {% if session['logged_in'] %}
+
+                        <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+                           type="button" class="btn btn-xs btn-default"><span
+                                class="glyphicon glyphicon-plus"></span></a>
+
+                        {% if session.id == post.author.id %}
+
+                        {% endif %}
+                    {% endif %}
+
+                    <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
+                        <br>
+                        <form class="form-inline" action="/topic/{{ post.id }}/{{ page }}/add_tag" role="form">
+                            <div class="input-group">
+                                <input name="tag" type="text" size="7" class="form-control">
+                                <span class="input-group-btn"><button class="btn btn-default" type="submit"
+                                                                      name="form-name"
+                                                                      value="tag"><span
+                                        class="glyphicon glyphicon-tag"></span></button></span>
+                            </div>
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2 hidden-xs hidden-sm">
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="author">
+                        <img class="author-icon" src="{{ url_for('homepage') }}{{ post.author.avatar }}">
+                        <br>
+                        <p class="author-icon"><a href="/people/{{ post.author.id }}"
+                                                  target="_blank">{{ post.author.nickname }}</a></p>
+                    </div>
+                </div>
+
+                <div class="col-xs-8">
+                    <div class="author">
+                        <h5>发表:
+                            <small><span class="glyphicon glyphicon-list-alt"></span> {{ post.author.post.count() }}
+                                文章&nbsp&nbsp
+                            </small>
+                        </h5>
+                        <h5>获得:
+                            <small><span class="glyphicon glyphicon-thumbs-up"></span> {{ post.author.count_like() }} 赞赏
+                            </small>
+                        </h5>
+                    </div>
+                    <div>
+                        {% if session['logged_in'] %}
+                            {% if g.user.id != post.author.id %}
+                                {% if g.user.is_following(post.author) %}
+                                    <a type="button" href="/people/{{ post.author.id }}/unfollow"
+                                       class="btn-sm btn-danger"><span
+                                            class="glyphicon glyphicon-minus"></span>取消关注</a>
+                                {% else %}
+                                    <a type="button" href="/people/{{ post.author.id }}/follow"
+                                       class="btn-sm btn-success"><span
+                                            class="glyphicon glyphicon-plus"></span>关注</a>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="toc col-md-4 bs-docs-sidebar hidden-print hidden-xs hidden-sm" role="complementary" id="float">
+        <ul class="nav bs-docs-sidenav">
+            <li><a href="#"><span class="glyphicon glyphicon-eject"> 返回标题</span></a></li>
+            {{ TOC }}
+            <li><a href="#comment-area"><span class="glyphicon glyphicon-comment"> 查看评论</span></a></li>
+        </ul>
+    </div>
+
+    <script>
+        $.fn.smartFloat = function () {
+            var position = function (element) {
+                var top = element.position().top, pos = element.css("position");
+                $(window).scroll(function () {
+                    var scrolls = $(this).scrollTop();
+                    if (scrolls > top) {
+                        if (window.XMLHttpRequest) {
+                            element.css({
+                                position: "fixed",
+                                top: 0
+                            });
+                        } else {
+                            element.css({
+                                top: scrolls
+                            });
+                        }
+                    } else {
+                        element.css({
+                            position: "absolute",
+                            top: top
+                        });
+                    }
+                });
+            };
+            return $(this).each(function () {
+                position($(this));
+            });
+        };
+        $("#float").smartFloat();
+        $(".content").scrollspy({target: '#float'})
+
+
+    </script>
+
+    <div class="row">
+        <div class="col-md-2 hidden-xs hidden-sm"></div>
+        <div class="col-md-6 col-xs-12" id="container">
+
+            <div class="paper"> &nbsp&nbsp
+
+                <hr>
+
+
+                <div class="content">
+
+                    <div id="mark-html">
+
+                        {{ body }}
+
+                    </div>
+
+                    {% if session['logged_in'] %}
+
+                        <div class="text-right" style="margin-right:14px;" id="like-area">
+
+                            {% if g.user == post.author %}
+
+                                <button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
+                                        class="glyphicon glyphicon-thumbs-up">:{{ post.liked_count()['like'] }}</span>
+                                </button>
+                                <button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
+                                        class="glyphicon glyphicon-thumbs-down">:{{ post.liked_count()['dislike'] }}</span>
+                                </button>
+
+                            {% elif post.is_liked(g.user) %}
+
+                                {% if post.liked_value(g.user) == 0 %}
+
+                                    <button type="submit" class="btn btn-sm btn-primary" disabled="disabled"><span
+                                            class="glyphicon glyphicon-thumbs-up">:{{ post.liked_count()['like'] }}</span>
+                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
+                                            class="glyphicon glyphicon-thumbs-down">:{{ post.liked_count()['dislike'] }}</span>
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
+                                            class="glyphicon glyphicon-thumbs-up">:{{ post.liked_count()['like'] }}</span>
+                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-primary" disabled="disabled"><span
+                                            class="glyphicon glyphicon-thumbs-down">:{{ post.liked_count()['dislike'] }}</span>
+                                    </button>
+
+                                {% endif %}
+
+                            {% else %}
+                                <form action="/topic/{{ post.id }}/{{ page }}/like" role="form">
+                                    <button type="submit" class="btn btn-sm btn-default" name="value" value=0><span
+                                            class="glyphicon glyphicon-thumbs-up">:{{ post.liked_count()['like'] }}</span>
+                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-default" name="value" value=1><span
+                                            class="glyphicon glyphicon-thumbs-down">:{{ post.liked_count()['dislike'] }}</span>
+                                    </button>
+                                </form>
+                            {% endif %}
+
+
+                            {% if len(post.user_like.all()) > 0 %}
+                                <div>
+                                    <br>
+                                    {% for user_like in post.user_like.limit(5).all() %}
+
+                                        <a href="/people/{{ user_like.id }}"><img style="width:30px"
+                                                                                  src="
+                                                                                          {{ url_for('homepage') }}{{ user_like.avatar }}"></a>
+
+                                    {% endfor %} 最近评价过
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <hr>
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-1 hidden-xs hidden-sm comment-author">
+                                <img style="width:45px" src="{{ url_for('homepage') }}{{ g.user.avatar }}">
+                            </div>
+                            <form class="editor" action="/topic/{{ post.id }}/{{ page }}/comment" method="post"
+                                  role="form">
+                                {{ commentform.hidden_tag() }}
+                                <div class="col-xs-7">
+
+                                    {{ commentform.body(rows=2, class='form-control') }}
+                                    {% for error in commentform.body.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+
+                                </div>
+                                <div class="col-mx-4">
+                                    <button class="button button-rounded button-raised button-action" type="submit"
+                                            name="form-name" value="comment">提交
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    {% else %}
+
+                        <div class="text-right" style="margin-right:14px;" id="like-area">
+
+                            <button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
+                                    class="glyphicon glyphicon-thumbs-up">:{{ post.liked_count()['like'] }}</span>
+                            </button>
+                            <button type="submit" class="btn btn-sm btn-default" disabled="disabled"><span
+                                    class="glyphicon glyphicon-thumbs-down">:{{ post.liked_count()['dislike'] }}</span>
+                            </button>
+                            {% if len(post.user_like.all()) > 0 %}
+                                <div>
+                                    <br>
+                                    {% for user_like in post.user_like.limit(5).all() %}
+
+                                        <img style="width:30px" src="{{ url_for('homepage') }}{{ user_like.avatar }}">
+
+                                    {% endfor %} 最近评价过
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <hr>
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-1 hidden-xs hidden-sm comment-author">
+                                <img style="width:45px" src="{{ url_for('homepage') }}static/avatar/x.png">
+                            </div>
+                            <div class="col-xs-7">
+
+                                <textarea name="title" rows="2" placeholder="请登陆后评论" class='form-control'
+                                          disabled></textarea>
+
+                            </div>
+                            <div class="col-xs-4">
+                                <a class="button button-rounded button-raised" href="{{ url_for('login_page') }}">登陆</a>
+                            </div>
+                        </div>
+
+                    {% endif %}
+                </div>
+                &nbsp&nbsp
+            </div>
+
+
+            <div class="comment-area well" id="comment-area">
+                <hr class="spliter">
+
+                {% if comments == [] %}
+
+                    目前还没有人评论哦～～～
+
+                {% else %}
+
+
+                    {% for comment in comments %}
+
+                        <div class="media-left comment">
+                            <a class="media-left" href="/people/{{ comment.commented_user.id }}" target="_blank">
+                                <img style="width:45px;" class="media-object"
+                                     src="{{ url_for('homepage') }}{{ comment.commented_user.avatar }}" alt=" ">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">
+                                    <a href="/people/{{ comment.commented_user.id }}">{{ comment.commented_user.nickname }}</a>
+                                    <small>&nbsp{{ momentjs(comment.time_comment).fromNow() }} &nbsp</small>
+                                </h4>
+                                <div>{{ Markup(markdown(comment.body)) }}</div>
+                                {% if session['logged_in'] %}
+                                    <a type="button" data-toggle="modal"
+                                       data-target="#myModal{{ comment.id }}"> 回复</a>
+                                {% endif %}
+
+                                {% if comment.replies.all() %}
+
+                                    <blockquote style="font-size:14px">
+                                        {% for reply in comment.replies.all() %}
+
+                                            <div class="media-left reply">
+                                                <div class="media-body">
+                                                    <h5 class="media-heading"><a
+                                                            href="/people/{{ reply.commented_user.id }}">
+                                                        {{ reply.commented_user.nickname }}</a>
+                                                        <small>{{ momentjs(reply.time_comment).fromNow() }}</small>
+                                                    </h5>
+                                                    {{ Markup(markdown(reply.body)) }}
+                                                </div>
+                                            </div>
+                                            <br>
+                                        {% endfor %}
+                                        <a type="button" class="glyphicon glyphicon-comment" data-toggle="modal"
+                                           data-target="#myModal{{ comment.id }}"> 添加评论</a>
+                                    </blockquote>
+                                {% endif %}
+
+                            </div>
+                            <!-- Button trigger modal -->
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="myModal{{ comment.id }}" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span
+                                                    aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                                            </button>
+                                            <h4 class="modal-title" id="myModalLabel">
+                                                回复: {{ comment.commented_user.nickname }} <img
+                                                    style="width:40px"
+                                                    src="{{ url_for('homepage') }}{{ comment.commented_user.avatar }}">
+                                            </h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{ comment.body }}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form class="editor" action="/topic/{{ post.id }}/{{ page }}/reply"
+                                                  method="post"
+                                                  role="form">
+                                                {{ commentform.hidden_tag() }}
+                                                <div class="col-md-9">
+
+                                                    {{ commentform.body(rows=2, class='form-control') }}
+                                                    {% for error in commentform.body.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button class="btn btn-lg btn-success" type="submit" name="reply"
+                                                            value={{ comment.id }}>提交
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="spliter">
+                    {% endfor %}
+                    <nav class="page" style="text-align:center">
+                        <ul class="pagination pagination-sm">
+                            <li><a href="/topic/{{ post.id }}?page=1#comment-area">&laquo;</a></li>
+                            {% for i in page_info[:-1] %}
+                                <li class="{{ i['active'] }}"><a
+                                        href="/topic/{{ post.id }}?page={{ i['page'] }}#comment-area">{{ i['page'] }}</a>
+                                </li>
+                            {% endfor %}
+                            <li><a href="/topic/{{ post.id }}?page={{ page_info[-1]['page'] }}#comment-area">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-2 hidden-xs hidden-sm"></div>
+    </div>
 
 {% endblock %}

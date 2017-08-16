@@ -1,412 +1,404 @@
-{% extends "header.html"%}
+{% extends "header.html" %}
 
 {% block body %}
 
-<style type="text/css">
+    <style type="text/css">
 
-.main
-{
-max-width:1400px;
-min-width:1000px;
-}
-
-.panel{
-box-shadow: 2px 1px 3px 1px #aaaaaa;
-}
-
-#chart{
-min-width: 800px;
-height:600px;
-}
-
-.comment-author
-{
-text-align:right;
-font-size:20px;
-}
-
-.comment-area
-{
-left:0px;
-right:0px;
-position: relative;
-}
-
-.comment
-{
-position: relative;
-}
-
-.modal
-{
-top:200px;
-}
-
-.spliter {
-    border: 0;
-    height: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.pagination
-{
-position: relative;
-margin: auto;
-}
-
-.comment-area img{
-max-width:500px;
-}
-
-
-
-
-
-</style>
-
-<script src="//cdn.bootcss.com/echarts/3.4.0/echarts.min.js"></script>
-
-<div class="container-fluid main">
-
-	<div class="col-md-2">
-
-		<div class="btn-group">
-			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-			        aria-haspopup="true" aria-expanded="false">
-				{{name}}{{code}} <span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu">
-				<li><a href="/quota/nxb_history?code=878002">沪深300看涨</a></li>
-				<li><a href="/quota/nxb_history?code=878003">沪深300看跌</a></li>
-				<li><a href="/quota/nxb_history?code=878004">创业看涨</a></li>
-				<li><a href="/quota/nxb_history?code=878005">创业看跌</a></li>
-				<li><a href="/quota/nxb_history?code=878006">上证50看涨</a></li>
-				<li><a href="/quota/nxb_history?code=878007">上证50看跌</a></li>
-				<li><a href="/quota/nxb_history?code=878008">中证500看涨</a></li>
-				<li><a href="/quota/nxb_history?code=878009">中证500看跌</a></li>
-			</ul>
-		</div>
-
-		<hr>
-
-		<div class="button-group">
-			<a href="/quota/nxb?code={{code}}" type="button" class="button">日内</a>
-			<a href="#" type="button" class="button active">历史</a>
-		</div>
-
-	</div>
-
-	<div class="col-md-8">
-
-		<div class="row">
-			<div id="chart"></div>
-
-			<br>
-
-			<hr>
-
-			{% if session['logged_in'] %}
-
-			<div class="row">
-				<div class="col-md-2 comment-author">
-					<img style="width:45px" src="{{ url_for('homepage')}}{{ g.user.avatar }}"> :
-				</div>
-				<form class="editor" action="/quota/{{post.id}}/comment" method="post" role="form">
-					{{ commentform.hidden_tag() }}
-					<input type=hidden value="/quota/nxb_history?code={{post.id}}" name="back">
-					<div class="col-md-7">
-
-						{{commentform.body(rows=2, class='form-control')}}
-						{% for error in commentform.body.errors %}
-						{{error}}
-						{% endfor %}
-
-					</div>
-					<div class="col-md-2">
-						<button class="button button-rounded button-raised button-action" type="submit"
-						        name="form-name" value="comment">提交
-						</button>
-					</div>
-				</form>
-			</div>
-
-			{% else %}
-
-			<div class="row">
-				<div class="col-xs-2 comment-author">
-					<img style="width:45px" src="{{ url_for('homepage')}}static/avatar/x.png"> :
-				</div>
-				<div class="col-xs-6">
-
-					<textarea name="title" rows="2" placeholder="请登陆后评论" class='form-control' disabled></textarea>
-
-				</div>
-				<div class="col-xs-4">
-					<a class="button button-rounded button-raised" href="{{ url_for('login_page') }}">登陆</a>
-				</div>
-			</div>
-
-			{% endif %}
-
-			<br>
-			<br>
-
-			<div class="comment-area well" id="comment-area">
-				<hr class="spliter">
-
-				{% if comments == [] %}
-
-				目前还没有人评论哦～～～
-
-				{% else %}
-
-
-				{% for comment in comments %}
-
-				<div class="media-left comment">
-					<a class="media-left" href="/people/{{comment.commented_user.id}}" target="_blank">
-						<img style="width:45px;" class="media-object"
-						     src="{{ url_for('homepage')}}{{ comment.commented_user.avatar }}" alt=" ">
-					</a>
-					<div class="media-body">
-						<h4 class="media-heading">
-							<a href="/people/{{comment.commented_user.id}}">{{ comment.commented_user.nickname }}</a>
-							<small>&nbsp{{ momentjs(comment.time_comment).fromNow() }} &nbsp</small>
-						</h4>
-						<div>{{ Markup(markdown(comment.body)) }}</div>
-						{% if session['logged_in'] %}
-						<a type="button" class="glyphicon glyphicon-comment" data-toggle="modal"
-						   data-target="#myModal{{comment.id}}">评论</a>
-						<br>
-						{% endif %}
-
-						{% for reply in comment.replies.all() %}
-
-						<br>
-
-						<div class="media-right reply">
-							<a class="media-right" href="/people/{{reply.commented_user.id}}" target="_blank">
-								<img style="width:35px;" class="media-object"
-								     src="{{ url_for('homepage')}}{{ reply.commented_user.avatar }}" alt=" ">
-							</a>
-							<div class="media-body">
-								<h5 class="media-heading"><a href="/people/{{reply.commented_user.id}}">{{
-									reply.commented_user.nickname }}</a>
-									<small>&nbsp{{ momentjs(reply.time_comment).fromNow() }} &nbsp</small>
-								</h5>
-								{{ Markup(markdown(reply.body)) }}
-							</div>
-						</div>
-
-						{% endfor %}
-
-					</div>
-					<!-- Button trigger modal -->
-
-					<!-- Modal -->
-					<div class="modal fade" id="myModal{{comment.id}}" tabindex="-1" role="dialog"
-					     aria-labelledby="myModalLabel" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal"><span
-											aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-									<h4 class="modal-title" id="myModalLabel">回复: {{ comment.commented_user.nickname }}
-										<img
-												style="width:40px"
-												src="{{ url_for('homepage')}}{{ comment.commented_user.avatar }}"></h4>
-								</div>
-								<div class="modal-body">
-									{{ comment.body }}
-								</div>
-								<div class="modal-footer">
-									<form class="editor" action="/quota/{{post.id}}/reply" method="post"
-									      role="form">
-										{{ commentform.hidden_tag() }}
-										<div class="col-md-9">
-
-											{{commentform.body(rows=2, class='form-control')}}
-											{% for error in commentform.body.errors %}
-											{{error}}
-											{% endfor %}
-
-										</div>
-										<input type=hidden value="/quota/nxb_history?code={{post.id}}" name="back">
-										<div class="col-md-2">
-											<button class="btn btn-lg btn-primary" type="submit" name="reply"
-											        value={{comment.id}}>提交
-											</button>
-										</div>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<hr class="spliter">
-				{% endfor %}
-				<nav class="page" style="text-align:center">
-					<ul class="pagination pagination-sm">
-						<li><a href="/quota/nxb?code={{post.id}}&page=1#comment-area">&laquo;</a></li>
-						{% for i in page_info[:-1] %}
-						<li class="{{i['active']}}"><a
-								href="/quota/nxb?code={{post.id}}&page={{i['page']}}#comment-area">{{i['page']}}</a>
-						</li>
-						{% endfor %}
-						<li>
-							<a href="/quota/nxb?code={{post.id}}&page={{page_info[-1]['page']}}#comment-area">&raquo;</a>
-						</li>
-					</ul>
-				</nav>
-
-				{% endif %}
-			</div>
-
-			<script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('chart'));
-        myChart.showLoading();
-        $.getJSON('/data/get_nxb_history', {
-            'day':{{day}},
-            'code':{{code}}
-         },function (data) {
-         myChart.hideLoading();
-
-        // 指定图表的配置项和数据
-        var option = {
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            animation: false
+        .main {
+            max-width: 1400px;
+            min-width: 1000px;
         }
-    },
-    color:['rgba(194,53,49,1)', 'rgba(47,69,84,1)', 'rgba(20,20,20,0.4)','rgba(47,69,84,1)', '#2f4554'],
-    legend: {
-        data:['价格','净值','交易量','溢价率'],
-        x: 'left'
-    },
-    toolbox: {
-        feature: {
-            dataZoom: {
-                yAxisIndex: 'none'
-            },
-            restore: {},
-            saveAsImage: {}
+
+        .panel {
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
         }
-    },
-    dataZoom: [
-        {
-            show: true,
-            realtime: false,
-            start: 50,
-            end: 100,
-            xAxisIndex: [0, 1]
-        },
-        {
-            type: 'inside',
-            realtime: false,
-            start: 30,
-            end: 70,
-            xAxisIndex: [0, 1]
+
+        #chart {
+            min-width: 800px;
+            height: 600px;
         }
-    ],
-    grid: [{
-        left: 60,
-        right: 60,
-        height: '55%'
-    }, {
-        left: 60,
-        right: 60,
-        top: '75%',
-        height: '15%'
-    }],
-    xAxis : [
-        {
-            type : 'category',
-            boundaryGap : false,
-            axisLine: {onZero: true},
-            data: data.data.datetime
-        },
-        {
-            gridIndex: 1,
-            type : 'category',
-            boundaryGap : false,
-            axisLine: {onZero: false},
-            data: data.data.datetime,
+
+        .comment-author {
+            text-align: right;
+            font-size: 20px;
         }
-    ],
-    yAxis : [
-        {
-            name : '交易价格',
-            type : 'value',
-            min : data.min,
-        },
-        {
-            name : '交易量',
-            type : 'value',
-            max : 2000000
-        },
-        {
-            gridIndex: 1,
-            name : '溢价率',
-            type : 'value',
-            axisLabel:{
-                formatter:'{value}%'
-            }
+
+        .comment-area {
+            left: 0px;
+            right: 0px;
+            position: relative;
         }
-    ],
-    series : [
-        {
-            name:'价格',
-            type:'line',
-            symbolSize: 8,
-            hoverAnimation: false,
-            data: data.data.last_price
-        },
-        {
-            name:'净值',
-            type:'line',
-            symbolSize: 8,
-            hoverAnimation: false,
-            data: data.data.svs_price
-        },
-        {
-            name:'交易量',
-            type:'bar',
-            yAxisIndex: 1,
-            hoverAnimation: false,
-            data: data.data.amount
-        },
-        {
-            name:'溢价率',
-            type:'line',
-            xAxisIndex: 1,
-            yAxisIndex: 2,
-            hoverAnimation: false,
-            data: data.data.discount
+
+        .comment {
+            position: relative;
         }
-    ]
-};
-myChart.setOption(option);
-});
+
+        .modal {
+            top: 200px;
+        }
+
+        .spliter {
+            border: 0;
+            height: 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .pagination {
+            position: relative;
+            margin: auto;
+        }
+
+        .comment-area img {
+            max-width: 500px;
+        }
 
 
+    </style>
+
+    <script src="//cdn.bootcss.com/echarts/3.4.0/echarts.min.js"></script>
+
+    <div class="container-fluid main">
+
+        <div class="col-md-2">
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    {{ name }}{{ code }} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="/quota/nxb_history?code=878002">沪深300看涨</a></li>
+                    <li><a href="/quota/nxb_history?code=878003">沪深300看跌</a></li>
+                    <li><a href="/quota/nxb_history?code=878004">创业看涨</a></li>
+                    <li><a href="/quota/nxb_history?code=878005">创业看跌</a></li>
+                    <li><a href="/quota/nxb_history?code=878006">上证50看涨</a></li>
+                    <li><a href="/quota/nxb_history?code=878007">上证50看跌</a></li>
+                    <li><a href="/quota/nxb_history?code=878008">中证500看涨</a></li>
+                    <li><a href="/quota/nxb_history?code=878009">中证500看跌</a></li>
+                </ul>
+            </div>
+
+            <hr>
+
+            <div class="button-group">
+                <a href="/quota/nxb?code={{ code }}" type="button" class="button">日内</a>
+                <a href="#" type="button" class="button active">历史</a>
+            </div>
+
+        </div>
+
+        <div class="col-md-8">
+
+            <div class="row">
+                <div id="chart"></div>
+
+                <br>
+
+                <hr>
+
+                {% if session['logged_in'] %}
+
+                    <div class="row">
+                        <div class="col-md-2 comment-author">
+                            <img style="width:45px" src="{{ url_for('homepage') }}{{ g.user.avatar }}"> :
+                        </div>
+                        <form class="editor" action="/quota/{{ post.id }}/comment" method="post" role="form">
+                            {{ commentform.hidden_tag() }}
+                            <input type=hidden value="/quota/nxb_history?code={{ post.id }}" name="back">
+                            <div class="col-md-7">
+
+                                {{ commentform.body(rows=2, class='form-control') }}
+                                {% for error in commentform.body.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+                            <div class="col-md-2">
+                                <button class="button button-rounded button-raised button-action" type="submit"
+                                        name="form-name" value="comment">提交
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                {% else %}
+
+                    <div class="row">
+                        <div class="col-xs-2 comment-author">
+                            <img style="width:45px" src="{{ url_for('homepage') }}static/avatar/x.png"> :
+                        </div>
+                        <div class="col-xs-6">
+
+                            <textarea name="title" rows="2" placeholder="请登陆后评论" class='form-control'
+                                      disabled></textarea>
+
+                        </div>
+                        <div class="col-xs-4">
+                            <a class="button button-rounded button-raised" href="{{ url_for('login_page') }}">登陆</a>
+                        </div>
+                    </div>
+
+                {% endif %}
+
+                <br>
+                <br>
+
+                <div class="comment-area well" id="comment-area">
+                    <hr class="spliter">
+
+                    {% if comments == [] %}
+
+                        目前还没有人评论哦～～～
+
+                    {% else %}
 
 
+                        {% for comment in comments %}
+
+                            <div class="media-left comment">
+                                <a class="media-left" href="/people/{{ comment.commented_user.id }}" target="_blank">
+                                    <img style="width:45px;" class="media-object"
+                                         src="{{ url_for('homepage') }}{{ comment.commented_user.avatar }}" alt=" ">
+                                </a>
+                                <div class="media-body">
+                                    <h4 class="media-heading">
+                                        <a href="/people/{{ comment.commented_user.id }}">{{ comment.commented_user.nickname }}</a>
+                                        <small>&nbsp{{ momentjs(comment.time_comment).fromNow() }} &nbsp</small>
+                                    </h4>
+                                    <div>{{ Markup(markdown(comment.body)) }}</div>
+                                    {% if session['logged_in'] %}
+                                        <a type="button" class="glyphicon glyphicon-comment" data-toggle="modal"
+                                           data-target="#myModal{{ comment.id }}">评论</a>
+                                        <br>
+                                    {% endif %}
+
+                                    {% for reply in comment.replies.all() %}
+
+                                        <br>
+
+                                        <div class="media-right reply">
+                                            <a class="media-right" href="/people/{{ reply.commented_user.id }}"
+                                               target="_blank">
+                                                <img style="width:35px;" class="media-object"
+                                                     src="{{ url_for('homepage') }}{{ reply.commented_user.avatar }}"
+                                                     alt=" ">
+                                            </a>
+                                            <div class="media-body">
+                                                <h5 class="media-heading"><a
+                                                        href="/people/{{ reply.commented_user.id }}">{{ reply.commented_user.nickname }}</a>
+                                                    <small>&nbsp{{ momentjs(reply.time_comment).fromNow() }} &nbsp
+                                                    </small>
+                                                </h5>
+                                                {{ Markup(markdown(reply.body)) }}
+                                            </div>
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+                                <!-- Button trigger modal -->
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="myModal{{ comment.id }}" tabindex="-1" role="dialog"
+                                     aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"><span
+                                                        aria-hidden="true">&times;</span><span
+                                                        class="sr-only">Close</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">
+                                                    回复: {{ comment.commented_user.nickname }}
+                                                    <img
+                                                            style="width:40px"
+                                                            src="
+                                                                    {{ url_for('homepage') }}{{ comment.commented_user.avatar }}">
+                                                </h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{ comment.body }}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form class="editor" action="/quota/{{ post.id }}/reply" method="post"
+                                                      role="form">
+                                                    {{ commentform.hidden_tag() }}
+                                                    <div class="col-md-9">
+
+                                                        {{ commentform.body(rows=2, class='form-control') }}
+                                                        {% for error in commentform.body.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+
+                                                    </div>
+                                                    <input type=hidden value="/quota/nxb_history?code={{ post.id }}"
+                                                           name="back">
+                                                    <div class="col-md-2">
+                                                        <button class="btn btn-lg btn-primary" type="submit"
+                                                                name="reply"
+                                                                value={{ comment.id }}>提交
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="spliter">
+                        {% endfor %}
+                        <nav class="page" style="text-align:center">
+                            <ul class="pagination pagination-sm">
+                                <li><a href="/quota/nxb?code={{ post.id }}&page=1#comment-area">&laquo;</a></li>
+                                {% for i in page_info[:-1] %}
+                                    <li class="{{ i['active'] }}"><a
+                                            href="/quota/nxb?code={{ post.id }}&page={{ i['page'] }}#comment-area">{{ i['page'] }}</a>
+                                    </li>
+                                {% endfor %}
+                                <li>
+                                    <a href="/quota/nxb?code={{ post.id }}&page={{ page_info[-1]['page'] }}#comment-area">&raquo;</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                    {% endif %}
+                </div>
+
+                <script type="text/javascript">
+                    // 基于准备好的dom，初始化echarts实例
+                    var myChart = echarts.init(document.getElementById('chart'));
+                    myChart.showLoading();
+                    $.getJSON('/data/get_nxb_history', {
+                        'day':{{day}},
+                        'code':{{code}}
+                    }, function (data) {
+                        myChart.hideLoading();
+
+                        // 指定图表的配置项和数据
+                        var option = {
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: {
+                                    animation: false
+                                }
+                            },
+                            color: ['rgba(194,53,49,1)', 'rgba(47,69,84,1)', 'rgba(20,20,20,0.4)', 'rgba(47,69,84,1)', '#2f4554'],
+                            legend: {
+                                data: ['价格', '净值', '交易量', '溢价率'],
+                                x: 'left'
+                            },
+                            toolbox: {
+                                feature: {
+                                    dataZoom: {
+                                        yAxisIndex: 'none'
+                                    },
+                                    restore: {},
+                                    saveAsImage: {}
+                                }
+                            },
+                            dataZoom: [
+                                {
+                                    show: true,
+                                    realtime: false,
+                                    start: 50,
+                                    end: 100,
+                                    xAxisIndex: [0, 1]
+                                },
+                                {
+                                    type: 'inside',
+                                    realtime: false,
+                                    start: 30,
+                                    end: 70,
+                                    xAxisIndex: [0, 1]
+                                }
+                            ],
+                            grid: [{
+                                left: 60,
+                                right: 60,
+                                height: '55%'
+                            }, {
+                                left: 60,
+                                right: 60,
+                                top: '75%',
+                                height: '15%'
+                            }],
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    boundaryGap: false,
+                                    axisLine: {onZero: true},
+                                    data: data.data.datetime
+                                },
+                                {
+                                    gridIndex: 1,
+                                    type: 'category',
+                                    boundaryGap: false,
+                                    axisLine: {onZero: false},
+                                    data: data.data.datetime,
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    name: '交易价格',
+                                    type: 'value',
+                                    min: data.min,
+                                },
+                                {
+                                    name: '交易量',
+                                    type: 'value',
+                                    max: 2000000
+                                },
+                                {
+                                    gridIndex: 1,
+                                    name: '溢价率',
+                                    type: 'value',
+                                    axisLabel: {
+                                        formatter: '{value}%'
+                                    }
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '价格',
+                                    type: 'line',
+                                    symbolSize: 8,
+                                    hoverAnimation: false,
+                                    data: data.data.last_price
+                                },
+                                {
+                                    name: '净值',
+                                    type: 'line',
+                                    symbolSize: 8,
+                                    hoverAnimation: false,
+                                    data: data.data.svs_price
+                                },
+                                {
+                                    name: '交易量',
+                                    type: 'bar',
+                                    yAxisIndex: 1,
+                                    hoverAnimation: false,
+                                    data: data.data.amount
+                                },
+                                {
+                                    name: '溢价率',
+                                    type: 'line',
+                                    xAxisIndex: 1,
+                                    yAxisIndex: 2,
+                                    hoverAnimation: false,
+                                    data: data.data.discount
+                                }
+                            ]
+                        };
+                        myChart.setOption(option);
+                    });
 
 
+                </script>
+
+            </div>
+        </div>
 
 
-
-
-
-			</script>
-
-		</div>
-	</div>
-
-
-</div>
+    </div>
 
 {% endblock %}

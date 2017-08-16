@@ -1,121 +1,119 @@
-{% extends "header.html"%}
+{% extends "header.html" %}
 
 {% block body %}
 
-<style type="text/css">
+    <style type="text/css">
 
-.head
-{
-margin-top:-25px;
-height:240px;
-background:url({{ url_for('static', filename='images/post-bg2.jpg')}});
-box-shadow: 2px 1px 3px 1px #aaaaaa;
-}
+        .head {
+            margin-top: -25px;
+            height: 240px;
+            background: url({{ url_for('static', filename='images/post-bg2.jpg')}});
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
 
-#panel
-{
-margin: auto;
-margin-top:-150px;
-left:0px;
-right:0px;
-max-width:1200px;
-min-width:400px;
-}
+        #panel {
+            margin: auto;
+            margin-top: -150px;
+            left: 0px;
+            right: 0px;
+            max-width: 1200px;
+            min-width: 400px;
+        }
 
-.form-group
-{
-max-width:700px;
-}
+        .form-group {
+            max-width: 700px;
+        }
 
-label > input{ /* HIDE RADIO */
-  visibility: hidden; /* Makes input not-clickable */
-  position: absolute; /* Remove input from document flow */
-}
-label > input + img{ /* IMAGE STYLES */
-  cursor:pointer;
-  border:2px solid transparent;
-}
-label > input:checked + img{ /* (RADIO CHECKED) IMAGE STYLES */
-  border:2px solid grey;
-}
+        label > input { /* HIDE RADIO */
+            visibility: hidden; /* Makes input not-clickable */
+            position: absolute; /* Remove input from document flow */
+        }
 
+        label > input + img { /* IMAGE STYLES */
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        label > input:checked + img { /* (RADIO CHECKED) IMAGE STYLES */
+            border: 2px solid grey;
+        }
 
 
-</style>
+    </style>
 
 
-<div class="well head">
+    <div class="well head">
 
-</div>
-
-
-<div class="container-fluid">
-	<div class="row" id="panel">
-
-		<div class="col-xs-12 col-md-8">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4>{{user.nickname}}
-						<small>-修改个人密码</small>
-					</h4>
-				</div>
-				<div class="panel-body">
-
-					<form action="/people/change_password" method="post" class="form-horizontal" role="form">
-						<div class="form-group">
-							{{ChangePassform.hidden_tag()}}
-
-							<label class="col-sm-2 control-label">旧密码：</label>
-							<div class="col-sm-10">
-								{{ChangePassform.oldpassword(size=20, placeholder='请输入原始密码', class='form-control')}}
-								<hr>
-							</div>
-
-							<label class="col-sm-2 control-label">新密码：</label>
-							<div class="col-sm-10">
-								{{ChangePassform.password(size=20, placeholder='请输入新密码', class='form-control')}}
-								{% for error in ChangePassform.password.errors %}
-								<span style="color: red;">[{{error}}]</span>
-								{% endfor %}
-								<br>
-							</div>
-
-							<label class="col-sm-2 control-label">重复密码：</label>
-							<div class="col-sm-10">
-								{{ChangePassform.repeat(size=20, placeholder='请重复输入新密码', class='form-control')}}
-								{% for error in ChangePassform.repeat.errors %}
-								<span style="color: red;">[{{error}}]</span>
-								{% endfor %}
-								<hr>
-							</div>
-
-							<div class="text-right">
-								<button type="submit" class="btn btn-primary text-right">保存</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-
-		<div class="col-xs-6 col-md-4">
-			<div class="list-group">
-
-				<a href="/people/{{g.user.id}}" class="list-group-item">动态</a>
-				<a href="/people/{{g.user.id}}/post" class="list-group-item">ta的文章</a>
-				<a href="#" class="list-group-item">ta的收藏</a>
+    </div>
 
 
-				<hr>
-				<a href="/people/notify" class="list-group-item">消息</a>
-				<a href="/people/drafts" class="list-group-item">草稿</a>
-				<a href="/people/edit" class="list-group-item">修改资料</a>
-				<a href="#" class="list-group-item active">隐私设置</a>
+    <div class="container-fluid">
+        <div class="row" id="panel">
 
-			</div>
-		</div>
+            <div class="col-xs-12 col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>{{ user.nickname }}
+                            <small>-修改个人密码</small>
+                        </h4>
+                    </div>
+                    <div class="panel-body">
 
-	</div>
-</div>
+                        <form action="/people/change_password" method="post" class="form-horizontal" role="form">
+                            <div class="form-group">
+                                {{ ChangePassform.hidden_tag() }}
+
+                                <label class="col-sm-2 control-label">旧密码：</label>
+                                <div class="col-sm-10">
+                                    {{ ChangePassform.oldpassword(size=20, placeholder='请输入原始密码', class='form-control') }}
+                                    <hr>
+                                </div>
+
+                                <label class="col-sm-2 control-label">新密码：</label>
+                                <div class="col-sm-10">
+                                    {{ ChangePassform.password(size=20, placeholder='请输入新密码', class='form-control') }}
+                                    {% for error in ChangePassform.password.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                    <br>
+                                </div>
+
+                                <label class="col-sm-2 control-label">重复密码：</label>
+                                <div class="col-sm-10">
+                                    {{ ChangePassform.repeat(size=20, placeholder='请重复输入新密码', class='form-control') }}
+                                    {% for error in ChangePassform.repeat.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                    <hr>
+                                </div>
+
+                                <div class="text-right">
+                                    <button type="submit" class="btn btn-primary text-right">保存</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-6 col-md-4">
+                <div class="list-group">
+
+                    <a href="/people/{{ g.user.id }}" class="list-group-item">动态</a>
+                    <a href="/people/{{ g.user.id }}/post" class="list-group-item">ta的文章</a>
+                    <a href="#" class="list-group-item">ta的收藏</a>
+
+
+                    <hr>
+                    <a href="/people/notify" class="list-group-item">消息</a>
+                    <a href="/people/drafts" class="list-group-item">草稿</a>
+                    <a href="/people/edit" class="list-group-item">修改资料</a>
+                    <a href="#" class="list-group-item active">隐私设置</a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 
 {% endblock %}

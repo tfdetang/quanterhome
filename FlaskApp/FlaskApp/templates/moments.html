@@ -1,145 +1,144 @@
-{% extends "header.html"%}
+{% extends "header.html" %}
 
 {% block body %}
 
-<style type="text/css">
+    <style type="text/css">
 
-.head
-{
-margin-top:-25px;
-height:200px;
-background:url({{ url_for('static', filename='images/index-bg.jpg')}});
-box-shadow: 2px 1px 3px 1px #aaaaaa;
-}
+        .head {
+            margin-top: -25px;
+            height: 200px;
+            background: url({{ url_for('static', filename='images/index-bg.jpg')}});
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
 
-.history
-{
-max-width:1000px;
-min-width:400px;
-}
+        .history {
+            max-width: 1000px;
+            min-width: 400px;
+        }
 
-blockquote{
-font-size:14px;
-}
+        blockquote {
+            font-size: 14px;
+        }
 
-.panel{
-box-shadow: 2px 1px 3px 1px #aaaaaa;
-}
+        .panel {
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
 
 
+    </style>
 
-</style>
+    <link href="{{ url_for('static', filename='css/timeline.min.css') }}" rel="stylesheet">
 
-<link href="{{ url_for('static', filename='css/timeline.min.css') }}" rel="stylesheet">
+    <div class="well head">
 
-<div class="well head">
+        <div class="text-center" style="color:white; margin-top:130px">
+            <h1>动态一览:</h1><br>
+        </div>
 
-	<div class="text-center" style="color:white; margin-top:130px">
-		<h1>动态一览:</h1><br>
-	</div>
+    </div>
 
-</div>
+    <div class="container-fluid history">
 
-<div class="container-fluid history">
+        <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked" role="tablist" style="max-width:200px">
 
-	<div class="col-md-2">
-		<ul class="nav nav-pills nav-stacked" role="tablist" style="max-width:200px">
+                {% if limit == '20' %}
+                    {% set twenty,week,month = 'active','','' %}
+                {% elif limit == 'week' %}
+                    {% set twenty,week,month = '','active','' %}
+                {% elif limit == 'month' %}
+                    {% set twenty,week,month = '','','active' %}
+                {% endif %}
 
-			{% if limit == '20' %}
-			{% set twenty,week,month = 'active','','' %}
-			{% elif limit == 'week' %}
-			{% set twenty,week,month = '','active','' %}
-			{% elif limit == 'month' %}
-			{% set twenty,week,month = '','','active' %}
-			{% endif %}
+                {% if method == 'all' %}
+                    {% set all,post,comment,agree = 'active','','','' %}
+                {% elif method == 'post' %}
+                    {% set all,post,comment,agree = '','active','','' %}
+                {% elif method == 'comment' %}
+                    {% set all,post,comment,agree = '','','active','' %}
+                {% elif method == 'agree' %}
+                    {% set all,post,comment,agree = '','','','active' %}
+                {% endif %}
 
-			{% if method == 'all' %}
-			{% set all,post,comment,agree = 'active','','','' %}
-			{% elif method == 'post' %}
-			{% set all,post,comment,agree = '','active','','' %}
-			{% elif method == 'comment' %}
-			{% set all,post,comment,agree = '','','active','' %}
-			{% elif method == 'agree' %}
-			{% set all,post,comment,agree = '','','','active' %}
-			{% endif %}
+                <li class="{{ twenty }}"><a href="/moments?limit=20&method={{ method }}">最近20条</a></li>
+                <li class="{{ week }}"><a href="/moments?limit=week&method={{ method }}">最近1周</a></li>
+                <li class="{{ month }}"><a href="/moments?limit=month&method={{ method }}">最近1个月</a></li>
 
-			<li class="{{twenty}}"><a href="/moments?limit=20&method={{method}}">最近20条</a></li>
-			<li class="{{week}}"><a href="/moments?limit=week&method={{method}}">最近1周</a></li>
-			<li class="{{month}}"><a href="/moments?limit=month&method={{method}}">最近1个月</a></li>
+                <hr>
 
-			<hr>
+                <li class="{{ all }}"><a href="/moments?limit={{ limit }}&method=all">全部</a></li>
+                <li class="{{ post }}"><a href="/moments?limit={{ limit }}&method=post">只看发帖</a></li>
+                <li class="{{ comment }}"><a href="/moments?limit={{ limit }}&method=comment">只看评论</a></li>
+                <li class="{{ agree }}"><a href="/moments?limit={{ limit }}&method=agree">看谁赞过</a></li>
 
-			<li class="{{all}}"><a href="/moments?limit={{limit}}&method=all">全部</a></li>
-			<li class="{{post}}"><a href="/moments?limit={{limit}}&method=post">只看发帖</a></li>
-			<li class="{{comment}}"><a href="/moments?limit={{limit}}&method=comment">只看评论</a></li>
-			<li class="{{agree}}"><a href="/moments?limit={{limit}}&method=agree">看谁赞过</a></li>
+            </ul>
+        </div>
 
-		</ul>
-	</div>
+        <div class="col-md-1">
+        </div>
 
-	<div class="col-md-1">
-	</div>
+        <div class="col-md-9">
 
-	<div class="col-md-9">
+            <div class="row">
 
-		<div class="row">
+                <div class="timeline timeline-line-dotted">
 
-			<div class="timeline timeline-line-dotted">
-
-				{% for moment in moments %}
-				{% set date = moment.time_moment[0:10] %}
-				{% if not date2 %}
-				<span class="timeline-label">
+                    {% for moment in moments %}
+                        {% set date = moment.time_moment[0:10] %}
+                        {% if not date2 %}
+                            <span class="timeline-label">
 					<span class="label label-default">{{ date }}</span>
 					{% set date2 = date %}
 				</span>
-				{% elif date!=date2 %}
-				<span class="timeline-label">
+                        {% elif date!=date2 %}
+                            <span class="timeline-label">
 					<span class="label label-default">{{ date }}</span>
 					{% set date2 = date %}
 				</span>
 
-				{% endif %}
+                        {% endif %}
 
-				<div class="timeline-item">
-					<div class="timeline-point">
-						<i class="fa fa-history"></i>
-					</div>
-					<div class="timeline-event timeline-event-default">
+                        <div class="timeline-item">
+                            <div class="timeline-point">
+                                <i class="fa fa-history"></i>
+                            </div>
+                            <div class="timeline-event timeline-event-default">
 
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h3 class="panel-title">
-									<a href="/people/{{moment.user_id}}">
-										<img style="width:28px;"
-										     src="{{ url_for('homepage')}}{{ moment.moments_user.avatar }}" alt=" ">
-										{{ moment.moments_user.nickname }}</a>
-									<small>{{ momentjs(moment.time_moment).calendar() }}</small>
-								</h3>
-							</div>
-							<div class="timeline-body">
-								<p><b>{{moment.operation}} <a
-										href="{{ moment.url }}">{{moment.url_name}}</a></b></p>
-								{% if moment.context != '' %}
-								<blockquote><i class="fa fa-quote-left"></i>{{ moment.context }}</blockquote>
-								{% endif %}
-							</div>
-						</div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <a href="/people/{{ moment.user_id }}">
+                                                <img style="width:28px;"
+                                                     src="{{ url_for('homepage') }}{{ moment.moments_user.avatar }}"
+                                                     alt=" ">
+                                                {{ moment.moments_user.nickname }}</a>
+                                            <small>{{ momentjs(moment.time_moment).calendar() }}</small>
+                                        </h3>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p><b>{{ moment.operation }} <a
+                                                href="{{ moment.url }}">{{ moment.url_name }}</a></b></p>
+                                        {% if moment.context != '' %}
+                                            <blockquote><i class="fa fa-quote-left"></i>{{ moment.context }}
+                                            </blockquote>
+                                        {% endif %}
+                                    </div>
+                                </div>
 
-					</div>
-				</div>
+                            </div>
+                        </div>
 
-				{% endfor %}
+                    {% endfor %}
 
-				<span class="timeline-label">
+                    <span class="timeline-label">
                             <span class="label label-danger">末尾</span>
                         </span>
 
-			</div>
-		</div>
-	</div>
+                </div>
+            </div>
+        </div>
 
 
-</div>
+    </div>
 
 {% endblock %}

@@ -1,209 +1,209 @@
-{% extends "header.html"%}
+{% extends "header.html" %}
 
 {% block body %}
 
-<style type="text/css">
+    <style type="text/css">
 
-.head
-{
-margin-top:-25px;
-height:240px;
-background:url({{ url_for('static', filename='images/post-bg2.jpg')}});
-box-shadow: 2px 1px 3px 1px #aaaaaa;
-}
+        .head {
+            margin-top: -25px;
+            height: 240px;
+            background: url({{ url_for('static', filename='images/post-bg2.jpg')}});
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
 
-#panel
-{
-margin: auto;
-margin-top:-150px;
-left:0px;
-right:0px;
-max-width:1200px;
-min-width:400px;
-}
+        #panel {
+            margin: auto;
+            margin-top: -150px;
+            left: 0px;
+            right: 0px;
+            max-width: 1200px;
+            min-width: 400px;
+        }
 
-.history
-{
-max-width:800px;
-min-width:400px;
-}
+        .history {
+            max-width: 800px;
+            min-width: 400px;
+        }
 
-blockquote{
-font-size:14px;
-}
+        blockquote {
+            font-size: 14px;
+        }
 
-.panel{
-box-shadow: 2px 1px 3px 1px #aaaaaa;
-}
+        .panel {
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
 
 
+    </style>
+
+    <link href="{{ url_for('static', filename='css/timeline.min.css') }}" rel="stylesheet">
 
 
-</style>
+    <div class="well head">
 
-<link href="{{ url_for('static', filename='css/timeline.min.css') }}" rel="stylesheet">
-
-
-<div class="well head">
-
-</div>
+    </div>
 
 
-<div class="container-fluid">
-	<div class="row" id="panel">
+    <div class="container-fluid">
+        <div class="row" id="panel">
 
-		<div class="col-xs-12 col-md-8">
-			<div class="panel panel-default">
-				<div class="panel-body">
+            <div class="col-xs-12 col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-body">
 
-					<div class="media">
-						<a class="media-left media-middle" href="#">
-							<img style="width:80px;" src="{{ url_for('homepage')}}{{ user.avatar }}" alt=" ">
-						</a>
-						<div class="media-body">
-							<h4 class="media-heading">{{ user.nickname }}
-								<small> 注册时间：{{ user.time_regist }}<br><br>
-									<p><span class="glyphicon glyphicon-user">：</span>{% if user.sex==1 %}男{% elif
-										user.sex==2 %}女{% else %}未知{% endif %} &nbsp
-										<span class="glyphicon glyphicon-briefcase">：</span>{% if user.occupation==None
-										%}未知{% else %}{{user.occupation}}{% endif %}</p></small>
-							</h4>
-							<p></p>
-							<hr>
-							{% if user.brief == None %}
-							<p>主人很懒，什么都没留下</p>
-							{% else %}
-							<p>{{ user.brief }}</p>
-							{% endif %}
-						</div>
-					</div>
-					<hr>
-					<div class="col-xs-6 col-md-4">
-						<h5>发表:
-							<small><span class="glyphicon glyphicon-list-alt"></span> {{user.post.count()}} 文章&nbsp&nbsp
-								<span class="glyphicon glyphicon-comment"></span> {{user.comments.count()}} 评论
-							</small>
-						</h5>
-						<h5>获得:
-							<small><span class="glyphicon glyphicon-thumbs-up"></span> {{user.count_like()}} 赞赏</small>
-						</h5>
-					</div>
+                        <div class="media">
+                            <a class="media-left media-middle" href="#">
+                                <img style="width:80px;" src="{{ url_for('homepage') }}{{ user.avatar }}" alt=" ">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">{{ user.nickname }}
+                                    <small> 注册时间：{{ user.time_regist }}<br><br>
+                                        <p><span class="glyphicon glyphicon-user">：</span>{% if user.sex==1 %}
+                                            男{% elif user.sex==2 %}女{% else %}未知{% endif %} &nbsp
+                                            <span class="glyphicon glyphicon-briefcase">：</span>
+                                            {% if user.occupation==None %}未知{% else %}{{ user.occupation }}{% endif %}
+                                        </p></small>
+                                </h4>
+                                <p></p>
+                                <hr>
+                                {% if user.brief == None %}
+                                    <p>主人很懒，什么都没留下</p>
+                                {% else %}
+                                    <p>{{ user.brief }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="col-xs-6 col-md-4">
+                            <h5>发表:
+                                <small><span class="glyphicon glyphicon-list-alt"></span> {{ user.post.count() }}
+                                    文章&nbsp&nbsp
+                                    <span class="glyphicon glyphicon-comment"></span> {{ user.comments.count() }} 评论
+                                </small>
+                            </h5>
+                            <h5>获得:
+                                <small><span class="glyphicon glyphicon-thumbs-up"></span> {{ user.count_like() }} 赞赏
+                                </small>
+                            </h5>
+                        </div>
 
-					<div class="col-xs-6 col-md-4">
-						<div class="col-xs-6">
-							<h4>
-								<small>关注了</small>
-								<br>
-								{{user.followed.count()}}人
-							</h4>
-						</div>
-						<div class="col-xs-6">
-							<h4>
-								<small>关注者</small>
-								<br>
-								{{user.followers.count()}}人
-							</h4>
-						</div>
-					</div>
-					<div class="col-xs-6 col-md-4">
-						{% if g.user.id != user.id %}
-						{% if g.user.is_following(user) %}
-						<a type="button" href="/people/{{user.id}}/unfollow" class="btn btn-danger"><span
-								class="glyphicon glyphicon-minus"></span>取消关注</a>
-						{% else %}
-						<a type="button" href="/people/{{user.id}}/follow" class="btn btn-success"><span
-								class="glyphicon glyphicon-plus"></span>关注</a>
-						{% endif %}
-						<a type="button" href="/people/{{user.id}}/message" class="btn btn-primary"><span
-								class="glyphicon glyphicon-send"></span>发私信</a>
-						{% endif %}
+                        <div class="col-xs-6 col-md-4">
+                            <div class="col-xs-6">
+                                <h4>
+                                    <small>关注了</small>
+                                    <br>
+                                    {{ user.followed.count() }}人
+                                </h4>
+                            </div>
+                            <div class="col-xs-6">
+                                <h4>
+                                    <small>关注者</small>
+                                    <br>
+                                    {{ user.followers.count() }}人
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-md-4">
+                            {% if g.user.id != user.id %}
+                                {% if g.user.is_following(user) %}
+                                    <a type="button" href="/people/{{ user.id }}/unfollow" class="btn btn-danger"><span
+                                            class="glyphicon glyphicon-minus"></span>取消关注</a>
+                                {% else %}
+                                    <a type="button" href="/people/{{ user.id }}/follow" class="btn btn-success"><span
+                                            class="glyphicon glyphicon-plus"></span>关注</a>
+                                {% endif %}
+                                <a type="button" href="/people/{{ user.id }}/message" class="btn btn-primary"><span
+                                        class="glyphicon glyphicon-send"></span>发私信</a>
+                            {% endif %}
 
-					</div>
-				</div>
-			</div>
+                        </div>
+                    </div>
+                </div>
 
-			<div class="history container-fluid">
+                <div class="history container-fluid">
 
 
-				<h4>{{ user.nickname }}的动态</h4>
+                    <h4>{{ user.nickname }}的动态</h4>
 
-				<div class="timeline timeline-single-column timeline-line-dotted">
+                    <div class="timeline timeline-single-column timeline-line-dotted">
 
-					{% for moment in moments %}
-					{% set date = moment.time_moment[0:10] %}
-					{% if not date2 %}
-					<span class="timeline-label">
+                        {% for moment in moments %}
+                            {% set date = moment.time_moment[0:10] %}
+                            {% if not date2 %}
+                                <span class="timeline-label">
 					<span class="label label-default">{{ date }}</span>
 					{% set date2 = date %}
 				</span>
-					{% elif date!=date2 %}
-					<span class="timeline-label">
+                            {% elif date!=date2 %}
+                                <span class="timeline-label">
 					<span class="label label-default">{{ date }}</span>
 					{% set date2 = date %}
 				</span>
 
-					{% endif %}
+                            {% endif %}
 
-					<div class="timeline-item">
-						<div class="timeline-point">
-							<i class="fa fa-history"></i>
-						</div>
-						<div class="timeline-event timeline-event-default">
+                            <div class="timeline-item">
+                                <div class="timeline-point">
+                                    <i class="fa fa-history"></i>
+                                </div>
+                                <div class="timeline-event timeline-event-default">
 
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h3 class="panel-title">
-										<a href="/people/{{moment.user_id}}">
-											<img style="width:28px;"
-											     src="{{ url_for('homepage')}}{{ moment.moments_user.avatar }}" alt=" ">
-											{{ moment.moments_user.nickname }}</a>
-										<small>{{ momentjs(moment.time_moment).calendar() }}</small>
-									</h3>
-								</div>
-								<div class="timeline-body">
-									<p><b>{{moment.operation}} <a
-											href="{{ moment.url }}">{{moment.url_name}}</a></b></p>
-									{% if moment.context != '' %}
-									<blockquote><i class="fa fa-quote-left"></i>{{ moment.context }}</blockquote>
-									{% endif %}
-								</div>
-							</div>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">
+                                                <a href="/people/{{ moment.user_id }}">
+                                                    <img style="width:28px;"
+                                                         src="{{ url_for('homepage') }}{{ moment.moments_user.avatar }}"
+                                                         alt=" ">
+                                                    {{ moment.moments_user.nickname }}</a>
+                                                <small>{{ momentjs(moment.time_moment).calendar() }}</small>
+                                            </h3>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p><b>{{ moment.operation }} <a
+                                                    href="{{ moment.url }}">{{ moment.url_name }}</a></b></p>
+                                            {% if moment.context != '' %}
+                                                <blockquote><i class="fa fa-quote-left"></i>{{ moment.context }}
+                                                </blockquote>
+                                            {% endif %}
+                                        </div>
+                                    </div>
 
-						</div>
-					</div>
+                                </div>
+                            </div>
 
-					{% endfor %}
+                        {% endfor %}
 
-					<span class="timeline-label">
+                        <span class="timeline-label">
                             <span class="label label-danger">末尾</span>
                         </span>
 
-				</div>
+                    </div>
 
 
-			</div>
+                </div>
 
-		</div>
+            </div>
 
-		<div class="col-xs-6 col-md-4">
-			<div class="list-group">
+            <div class="col-xs-6 col-md-4">
+                <div class="list-group">
 
-				<a href="#" class="list-group-item active">动态</a>
-				<a href="/people/{{user.id}}/post" class="list-group-item">ta的文章</a>
-				<a href="#" class="list-group-item">ta的收藏</a>
+                    <a href="#" class="list-group-item active">动态</a>
+                    <a href="/people/{{ user.id }}/post" class="list-group-item">ta的文章</a>
+                    <a href="#" class="list-group-item">ta的收藏</a>
 
-				{% if g.user.id == user.id %}
-				<hr>
-				<a href="/people/notify" class="list-group-item">消息</a>
-				<a href="/people/drafts" class="list-group-item">草稿</a>
-				<a href="/people/edit" class="list-group-item">修改资料</a>
-				<a href="/people/privicy" class="list-group-item">隐私设置</a>
-				{% endif %}
-			</div>
-		</div>
+                    {% if g.user.id == user.id %}
+                        <hr>
+                        <a href="/people/notify" class="list-group-item">消息</a>
+                        <a href="/people/drafts" class="list-group-item">草稿</a>
+                        <a href="/people/edit" class="list-group-item">修改资料</a>
+                        <a href="/people/privicy" class="list-group-item">隐私设置</a>
+                    {% endif %}
+                </div>
+            </div>
 
-	</div>
+        </div>
 
-</div>
+    </div>
 
 {% endblock %}

@@ -1,170 +1,170 @@
-{% extends "header.html"%}
+{% extends "header.html" %}
 
 {% block body %}
 
-<style type="text/css">
-.breadcrumb
-{
-position: absolute;
-margin: auto;
-left:0px;
-right:0px;
-position: relative;
-margin-top:-19px;
-max-width:1000px;
-min-width:400px;
-font-weight:900;
-}
+    <style type="text/css">
+        .breadcrumb {
+            position: absolute;
+            margin: auto;
+            left: 0px;
+            right: 0px;
+            position: relative;
+            margin-top: -19px;
+            max-width: 1000px;
+            min-width: 400px;
+            font-weight: 900;
+        }
 
-.tabs
-{position: absolute;
-margin: auto;
-left:0px;
-right:0px;
-position: relative;
-margin-top:5px;
-max-width:1000px;
-min-width:400px;
-}
+        .tabs {
+            position: absolute;
+            margin: auto;
+            left: 0px;
+            right: 0px;
+            position: relative;
+            margin-top: 5px;
+            max-width: 1000px;
+            min-width: 400px;
+        }
 
-#tab-content
-{
-margin: auto;
-margin-top:20px;
-left:0px;
-right:0px;
-max-width:1000px;
-min-width:400px;
-}
+        #tab-content {
+            margin: auto;
+            margin-top: 20px;
+            left: 0px;
+            right: 0px;
+            max-width: 1000px;
+            min-width: 400px;
+        }
 
-.pagination
-{
-position: relative;
-margin: auto;
-}
+        .pagination {
+            position: relative;
+            margin: auto;
+        }
 
-</style>
+    </style>
 
 
-<div class="well" style="height:95px;">
+    <div class="well" style="height:95px;">
 
-	<ul class="breadcrumb">
-		<li style="font-size:15px;margin-top:10px"><a href="/lobby">大厅</a><span class="divider"></span></li>
-		<li style="font-size:15px;" class="active">{{theme.name}}</li>
-	</ul>
-	<!-- Nav tabs -->
-	<ul class="nav nav-tabs tabs" role="tablist">
-		{% if method == 'all' %}
-		<li role="presentation" class="active"><a href="#home" role="tab">全部</a></li>
-		<li role="presentation"><a href="/lobby/{{theme.url}}/?method=followed">我关注的人</a></li>
-		<li role="presentation"><a href="/lobby/{{theme.url}}/?method=hot" role="tab">最多讨论</a></li>
-		<li role="presentation"><a href="#settings" role="tab">发现</a></li>
-		{% elif method == 'followed' %}
-		<li role="presentation"><a href="/lobby/{{theme.url}}/" role="tab">全部</a></li>
-		<li role="presentation" class="active"><a href="#home">我关注的人</a></li>
-		<li role="presentation"><a href="/lobby/{{theme.url}}/?method=hot" role="tab">最多讨论</a></li>
-		<li role="presentation"><a href="#settings" role="tab">发现</a></li>
-		{% elif method == 'hot' %}
-		<li role="presentation"><a href="/lobby/{{theme.url}}/" role="tab">全部</a></li>
-		<li role="presentation"><a href="/lobby/{{theme.url}}/?method=followed">我关注的人</a></li>
-		<li role="presentation" class="active"><a href="#home" role="tab">最多讨论</a></li>
-		<li role="presentation"><a href="#settings" role="tab">发现</a></li>
-		{% endif %}
-	</ul>
+        <ul class="breadcrumb">
+            <li style="font-size:15px;margin-top:10px"><a href="/lobby">大厅</a><span class="divider"></span></li>
+            <li style="font-size:15px;" class="active">{{ theme.name }}</li>
+        </ul>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs tabs" role="tablist">
+            {% if method == 'all' %}
+                <li role="presentation" class="active"><a href="#home" role="tab">全部</a></li>
+                <li role="presentation"><a href="/lobby/{{ theme.url }}/?method=followed">我关注的人</a></li>
+                <li role="presentation"><a href="/lobby/{{ theme.url }}/?method=hot" role="tab">最多讨论</a></li>
+                <li role="presentation"><a href="#settings" role="tab">发现</a></li>
+            {% elif method == 'followed' %}
+                <li role="presentation"><a href="/lobby/{{ theme.url }}/" role="tab">全部</a></li>
+                <li role="presentation" class="active"><a href="#home">我关注的人</a></li>
+                <li role="presentation"><a href="/lobby/{{ theme.url }}/?method=hot" role="tab">最多讨论</a></li>
+                <li role="presentation"><a href="#settings" role="tab">发现</a></li>
+            {% elif method == 'hot' %}
+                <li role="presentation"><a href="/lobby/{{ theme.url }}/" role="tab">全部</a></li>
+                <li role="presentation"><a href="/lobby/{{ theme.url }}/?method=followed">我关注的人</a></li>
+                <li role="presentation" class="active"><a href="#home" role="tab">最多讨论</a></li>
+                <li role="presentation"><a href="#settings" role="tab">发现</a></li>
+            {% endif %}
+        </ul>
 
-</div>
+    </div>
 
-<!-- Tab panes -->
-<div id="tab-content">
+    <!-- Tab panes -->
+    <div id="tab-content">
 
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<div class="row">
-				<div class="col-xs-10 col-md-10">
-					<h4>{{theme.name}}
-						<small><br>{{theme.introduce}}</small>
-					</h4>
-				</div>
-				<div class="col-xs-2 col-md-2 text-right" style="top:10px"><a type="button"
-				                                                              href="/{{theme.url}}/new_post"
-				                                                              class="btn btn-success"><span
-						class="glyphicon glyphicon-pencil">发起新话题</span></a></div>
-			</div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-10 col-md-10">
+                        <h4>{{ theme.name }}
+                            <small><br>{{ theme.introduce }}</small>
+                        </h4>
+                    </div>
+                    <div class="col-xs-2 col-md-2 text-right" style="top:10px"><a type="button"
+                                                                                  href="/{{ theme.url }}/new_post"
+                                                                                  class="btn btn-success"><span
+                            class="glyphicon glyphicon-pencil">发起新话题</span></a></div>
+                </div>
 
-		</div>
-		<div class="panel-body">
+            </div>
+            <div class="panel-body">
 
-			{% if not posts %}
+                {% if not posts %}
 
-			还没人发文章哦～～ 快来成为第一个吧！！
-			<hr>
+                    还没人发文章哦～～ 快来成为第一个吧！！
+                    <hr>
 
-			{% else %}
+                {% else %}
 
-			{% for post in posts %}
+                    {% for post in posts %}
 
-			<div class="media-right">
-				<a class="media-left" href="/people/{{post.author.id}}" target="_blank">
-					<img style="width:45px;" class="media-object"
-					     src="{{ url_for('homepage')}}{{ post.author.avatar }}" alt=" ">
-				</a>
-				<div class="media-body">
-					<h4 class="media-heading">
-						<a href="/topic/{{ post.id }}">{{ post.title }}</a> <br>
-						<small>by: {{ post.author.nickname }} &nbsp 最后编辑: {{ momentjs(post.time_post).fromNow() }}
-							&nbsp <span class="glyphicon glyphicon-tag"></span>
-							{% for tag in post.post_tags%}
+                        <div class="media-right">
+                            <a class="media-left" href="/people/{{ post.author.id }}" target="_blank">
+                                <img style="width:45px;" class="media-object"
+                                     src="{{ url_for('homepage') }}{{ post.author.avatar }}" alt=" ">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">
+                                    <a href="/topic/{{ post.id }}">{{ post.title }}</a> <br>
+                                    <small>by: {{ post.author.nickname }} &nbsp
+                                        最后编辑: {{ momentjs(post.time_post).fromNow() }}
+                                        &nbsp <span class="glyphicon glyphicon-tag"></span>
+                                        {% for tag in post.post_tags %}
 
-							{% if tag.user_id == post.author.id %}
-							<span class="label label-primary">{{tag.label.name}}</span>
-							{% else %}
-							<span class="label label-default">{{tag.label.name}}</span>
-							{% endif %}
+                                            {% if tag.user_id == post.author.id %}
+                                                <span class="label label-primary">{{ tag.label.name }}</span>
+                                            {% else %}
+                                                <span class="label label-default">{{ tag.label.name }}</span>
+                                            {% endif %}
 
-							{% endfor %}
-							<p class="text-right">
-								{% if session['logged_in'] == True %}
-								{% if post.is_read(g.user) %}
-								<span class="glyphicon glyphicon-eye-open">&nbsp</span>
-								{% endif %}
-								{% endif %}
-								<span class="glyphicon glyphicon-comment"> {{ post.comments.count() }}</span></p>
-						</small>
-					</h4>
-					{% if session['logged_in'] %}
-						{% if post.is_read(g.user) %}
-						<div style="color:grey">
-							{{ post.abstract }}
-						</div>
-						{% else %}
-							{{ post.abstract }}
-						{% endif %}
-					{%else%}
-					<div>
-						{{ post.abstract }}
-					</div>
-					{% endif %}
-				</div>
-			</div>
-			<hr>
+                                        {% endfor %}
+                                        <p class="text-right">
+                                            {% if session['logged_in'] == True %}
+                                                {% if post.is_read(g.user) %}
+                                                    <span class="glyphicon glyphicon-eye-open">&nbsp</span>
+                                                {% endif %}
+                                            {% endif %}
+                                            <span class="glyphicon glyphicon-comment"> {{ post.comments.count() }}</span>
+                                        </p>
+                                    </small>
+                                </h4>
+                                {% if session['logged_in'] %}
+                                    {% if post.is_read(g.user) %}
+                                        <div style="color:grey">
+                                            {{ post.abstract }}
+                                        </div>
+                                    {% else %}
+                                        {{ post.abstract }}
+                                    {% endif %}
+                                {% else %}
+                                    <div>
+                                        {{ post.abstract }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr>
 
-			{% endfor %}
-			{% endif %}
-			<nav class="page" style="text-align:center">
-				<ul class="pagination">
-					<li><a href="/lobby/{{theme.url}}?page=1&method={{method}}">&laquo;</a></li>
-					{% for i in page_info[:-1] %}
-					<li class="{{i['active']}}"><a
-							href="/lobby/{{theme.url}}?page={{i['page']}}&method={{method}}">{{i['page']}}</a>
-					</li>
-					{% endfor %}
-					<li><a href="/lobby/{{theme.url}}?page={{page_info[-1]['page']}}&method={{method}}">&raquo;</a></li>
-				</ul>
-			</nav>
+                    {% endfor %}
+                {% endif %}
+                <nav class="page" style="text-align:center">
+                    <ul class="pagination">
+                        <li><a href="/lobby/{{ theme.url }}?page=1&method={{ method }}">&laquo;</a></li>
+                        {% for i in page_info[:-1] %}
+                            <li class="{{ i['active'] }}"><a
+                                    href="/lobby/{{ theme.url }}?page={{ i['page'] }}&method={{ method }}">{{ i['page'] }}</a>
+                            </li>
+                        {% endfor %}
+                        <li><a href="/lobby/{{ theme.url }}?page={{ page_info[-1]['page'] }}&method={{ method }}">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
 
-		</div>
-	</div>
-</div>
+            </div>
+        </div>
+    </div>
 
 
 {% endblock %}

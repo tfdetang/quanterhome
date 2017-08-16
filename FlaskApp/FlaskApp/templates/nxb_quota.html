@@ -1,691 +1,684 @@
-{% extends "header.html"%}
+{% extends "header.html" %}
 
 {% block body %}
 
-<style type="text/css">
+    <style type="text/css">
 
-.main
-{
-max-width:1400px;
-}
-
-.panel{
-line-height:160%;
-font-size:85%
-}
-
-#chart{
-min-width: 400px;
-min-height: 500px;
-}
-
-.buy{
-color:red
-}
-
-.sell{
-color:green
-}
-
-.comment-author
-{
-text-align:right;
-font-size:20px;
-}
-
-.comment-area
-{
-left:0px;
-right:0px;
-position: relative;
-}
-
-.comment
-{
-position: relative;
-}
-
-.modal
-{
-top:200px;
-}
-
-.spliter {
-    border: 0;
-    height: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.pagination
-{
-position: relative;
-margin: auto;
-}
-
-.comment-area img{
-max-width:500px;
-}
-
-
-
-
-
-
-
-
-</style>
-
-<script src="//cdn.bootcss.com/echarts/3.4.0/echarts.min.js"></script>
-
-<div class="container-fluid main">
-
-	<div class="col-md-2 col-xs-8">
-		<div class="btn-group">
-			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-			        aria-haspopup="true" aria-expanded="false">
-				{{name}}{{code}} <span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu">
-				<li><a href="/quota/nxb?date={{date}}&code=878002">沪深300看涨</a></li>
-				<li><a href="/quota/nxb?date={{date}}&code=878003">沪深300看跌</a></li>
-				<li><a href="/quota/nxb?date={{date}}&code=878004">创业看涨</a></li>
-				<li><a href="/quota/nxb?date={{date}}&code=878005">创业看跌</a></li>
-				<li><a href="/quota/nxb?date={{date}}&code=878006">上证50看涨</a></li>
-				<li><a href="/quota/nxb?date={{date}}&code=878007">上证50看跌</a></li>
-				<li><a href="/quota/nxb?date={{date}}&code=878008">中证500看涨</a></li>
-				<li><a href="/quota/nxb?date={{date}}&code=878009">中证500看跌</a></li>
-			</ul>
-		</div>
-		<hr>
-		<div class="panel panel-default">
-			<div class="panel-body" id="quote">
-				<div class="row">
-					<div class="col-xs-6">卖5: <span class="sell" id="sell5"></span></div>
-					<div class="col-xs-6"><span id="v-sell5"></span></div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6">卖4: <span class="sell" id="sell4"></span></div>
-					<div class="col-xs-6"><span id="v-sell4"></span></div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6">卖3: <span class="sell" id="sell3"></span></div>
-					<div class="col-xs-6"><span id="v-sell3"></span></div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6">卖2: <span class="sell" id="sell2"></span></div>
-					<div class="col-xs-6"><span id="v-sell2"></span></div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6">卖1: <span class="sell" id="sell1"></span></div>
-					<div class="col-xs-6"><span id="v-sell1"></span></div>
-				</div>
-
-				<hr>
-
-				<div class="row">
-					<div class="col-xs-6">买1: <span class="buy" id="buy1"></span></div>
-					<div class="col-xs-6"><span id="v-buy1"></span></div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6">买2: <span class="buy" id="buy2"></span></div>
-					<div class="col-xs-6"><span id="v-buy2"></span></div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6">买3: <span class="buy" id="buy3"></span></div>
-					<div class="col-xs-6"><span id="v-buy3"></span></div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6">买4: <span class="buy" id="buy4"></span></div>
-					<div class="col-xs-6"><span id="v-buy4"></span></div>
-				</div>
-				<div class="row">
-					<div class="col-xs-6">买5: <span class="buy" id="buy5"></span></div>
-					<div class="col-xs-6"><span id="v-buy5"></span></div>
-				</div>
-			</div>
-			<div class="panel-footer">
-
-				<div class="row">
-					<div class="col-xs-6">今开:<span id="open"></span></div>
-					<div class="col-xs-6">昨收:<span id="close"></span></div>
-				</div>
-
-				<div class="row">
-					<div class="col-xs-6">最低:<span id="low"></span></div>
-					<div class="col-xs-6">最高:<span id="high"></span></div>
-				</div>
-
-				<div class="row">
-					<div class="col-xs-6">净值:<span id="net"></span></div>
-					<div class="col-xs-6">最新:<span id="new"></span></div>
-				</div>
-
-				<div class="row">
-					<div class="col-xs-6">溢价:<span id="discount"></span></div>
-					<div class="col-xs-6">价差:<span id="different"></span></div>
-				</div>
-
-				<div class="row">
-					<div class="col-xs-8">总量:<span id="amount"></span></div>
-				</div>
-			</div>
-		</div>
-
-		<hr>
-		<h4>分时成交</h4>
-		<div class="panel panel-default">
-
-			<table class="table table-striped" id="deal">
-
-			</table>
-
-		</div>
-
-	</div>
-
-	<div class="col-md-8 col-xs-8">
-
-
-		<div class="button-group">
-			<a href="#" type="button" class="button active">日内</a>
-			<a href="/quota/nxb_history?code={{code}}" type="button" class="button">历史</a>
-		</div>
-
-		<div class="row">
-
-			<div id="chart"></div>
-
-			<br>
-
-			<hr>
-
-			{% if session['logged_in'] %}
-
-			<div class="row">
-				<div class="col-xs-2 comment-author">
-					<img style="width:45px" src="{{ url_for('homepage')}}{{ g.user.avatar }}"> :
-				</div>
-				<form class="editor" action="/quota/{{post.id}}/comment" method="post" role="form">
-					{{ commentform.hidden_tag() }}
-					<input type=hidden value="/quota/nxb?code={{post.id}}" name="back">
-					<div class="col-xs-7">
-
-						{{commentform.body(rows=2, class='form-control')}}
-						{% for error in commentform.body.errors %}
-						{{error}}
-						{% endfor %}
-
-					</div>
-					<div class="col-xs-2">
-						<button class="button button-rounded button-raised button-action" type="submit" name="form-name"
-						        value="comment">提交
-						</button>
-					</div>
-				</form>
-			</div>
-
-			{% else %}
-
-			<div class="row">
-				<div class="col-xs-2 comment-author">
-					<img style="width:45px" src="{{ url_for('homepage')}}static/avatar/x.png"> :
-				</div>
-				<div class="col-xs-6">
-
-					<textarea name="title" rows="2" placeholder="请登陆后评论" class='form-control' disabled></textarea>
-
-				</div>
-				<div class="col-xs-4">
-					<a class="button button-rounded button-raised" href="{{ url_for('login_page') }}">登陆</a>
-				</div>
-			</div>
-
-			{% endif %}
-
-			<br>
-			<br>
-
-			<div class="comment-area well" id="comment-area">
-				<hr class="spliter">
-
-				{% if comments == [] %}
-
-				目前还没有人评论哦～～～
-
-				{% else %}
-
-
-				{% for comment in comments %}
-
-				<div class="media-left comment">
-					<a class="media-left" href="/people/{{comment.commented_user.id}}" target="_blank">
-						<img style="width:45px;" class="media-object"
-						     src="{{ url_for('homepage')}}{{ comment.commented_user.avatar }}" alt=" ">
-					</a>
-					<div class="media-body">
-						<h4 class="media-heading">
-							<a href="/people/{{comment.commented_user.id}}">{{ comment.commented_user.nickname }}</a>
-							<small>&nbsp{{ momentjs(comment.time_comment).fromNow() }} &nbsp</small>
-						</h4>
-						<div>{{ Markup(markdown(comment.body)) }}</div>
-						{% if session['logged_in'] %}
-						<a type="button" class="glyphicon glyphicon-comment" data-toggle="modal"
-						   data-target="#myModal{{comment.id}}">评论</a>
-						<br>
-						{% endif %}
-
-						{% for reply in comment.replies.all() %}
-
-						<br>
-
-						<div class="media-right reply">
-							<a class="media-right" href="/people/{{reply.commented_user.id}}" target="_blank">
-								<img style="width:35px;" class="media-object"
-								     src="{{ url_for('homepage')}}{{ reply.commented_user.avatar }}" alt=" ">
-							</a>
-							<div class="media-body">
-								<h5 class="media-heading"><a href="/people/{{reply.commented_user.id}}">{{
-									reply.commented_user.nickname }}</a>
-									<small>&nbsp{{ momentjs(reply.time_comment).fromNow() }} &nbsp</small>
-								</h5>
-								{{ Markup(markdown(reply.body)) }}
-							</div>
-						</div>
-
-						{% endfor %}
-
-					</div>
-					<!-- Button trigger modal -->
-
-					<!-- Modal -->
-					<div class="modal fade" id="myModal{{comment.id}}" tabindex="-1" role="dialog"
-					     aria-labelledby="myModalLabel" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal"><span
-											aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-									<h4 class="modal-title" id="myModalLabel">回复: {{ comment.commented_user.nickname }}
-										<img
-												style="width:40px"
-												src="{{ url_for('homepage')}}{{ comment.commented_user.avatar }}"></h4>
-								</div>
-								<div class="modal-body">
-									{{ comment.body }}
-								</div>
-								<div class="modal-footer">
-									<form class="editor" action="/quota/{{post.id}}/reply" method="post"
-									      role="form">
-										{{ commentform.hidden_tag() }}
-										<div class="col-md-9">
-
-											{{commentform.body(rows=2, class='form-control')}}
-											{% for error in commentform.body.errors %}
-											{{error}}
-											{% endfor %}
-
-										</div>
-										<input type=hidden value="/quota/nxb?code={{post.id}}" name="back">
-										<div class="col-md-2">
-											<button class="btn btn-lg btn-primary" type="submit" name="reply"
-											        value={{comment.id}}>提交
-											</button>
-										</div>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<hr class="spliter">
-				{% endfor %}
-				<nav class="page" style="text-align:center">
-					<ul class="pagination pagination-sm">
-						<li><a href="/quota/nxb?code={{post.id}}&page=1#comment-area">&laquo;</a></li>
-						{% for i in page_info[:-1] %}
-						<li class="{{i['active']}}"><a
-								href="/quota/nxb?code={{post.id}}&page={{i['page']}}#comment-area">{{i['page']}}</a>
-						</li>
-						{% endfor %}
-						<li>
-							<a href="/quota/nxb?code={{post.id}}&page={{page_info[-1]['page']}}#comment-area">&raquo;</a>
-						</li>
-					</ul>
-				</nav>
-
-				{% endif %}
-			</div>
-
-			<script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('chart'));
-        myChart.showLoading();
-        $.getJSON('/data/get_nxb_quota', {
-            'date':{{date}},
-            'time':'09:15',
-            'code':{{code}}
-         },function (data) {
-         myChart.hideLoading();
-
-        // 指定图表的配置项和数据
-        var datatime = data.time;
-        var option = {
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            animation: false
+        .main {
+            max-width: 1400px;
         }
-    },
-    color:['rgba(194,53,49,1)', 'rgba(47,69,84,1)', 'rgba(20,20,20,0.4)','rgba(47,69,84,1)', '#2f4554'],
-    legend: {
-        data:['价格','净值','交易量','溢价率'],
-        x: 'left'
-    },
-    toolbox: {
-        feature: {
-            dataZoom: {
-                yAxisIndex: 'none'
-            },
-            restore: {},
-            saveAsImage: {}
+
+        .panel {
+            line-height: 160%;
+            font-size: 85%
         }
-    },
-    dataZoom: [
-        {
-            show: true,
-            realtime: false,
-            start: 50,
-            end: 100,
-            xAxisIndex: [0, 1]
-        },
-        {
-            type: 'inside',
-            realtime: false,
-            start: 30,
-            end: 70,
-            xAxisIndex: [0, 1]
+
+        #chart {
+            min-width: 400px;
+            min-height: 500px;
         }
-    ],
-    grid: [{
-        left: 50,
-        right: 30,
-        height: '45%'
-    }, {
-        left: 50,
-        right: 30,
-        top: '70%',
-        height: '15%'
-    }],
-    xAxis : [
-        {
-            type : 'category',
-            boundaryGap : true,
-            axisLine: {onZero: true},
-            data: data.data.time
-        },
-        {
-            gridIndex: 1,
-            type : 'category',
-            boundaryGap : true,
-            axisLine: {onZero: true},
-            data: data.data.time,
+
+        .buy {
+            color: red
         }
-    ],
-    yAxis : [
-        {
-            name : '交易价格',
-            type : 'value',
-            min : data.min - 0.01
-        },
-        {
-            name : '交易量',
-            type : 'value',
-            max : 500000
-        },
-        {
-            gridIndex: 1,
-            name : '溢价率',
-            type : 'value',
-            axisLabel:{
-                formatter:'{value}%'
-            }
+
+        .sell {
+            color: green
         }
-    ],
-    series : [
-        {
-            name:'价格',
-            type:'line',
-            symbolSize: 8,
-            hoverAnimation: false,
-            data: data.data.last_price
-        },
-        {
-            name:'净值',
-            type:'line',
-            symbolSize: 8,
-            hoverAnimation: false,
-            data: data.data.svs_price
-        },
-        {
-            name:'交易量',
-            type:'bar',
-            yAxisIndex: 1,
-            hoverAnimation: false,
-            data: data.data.amount
-        },
-        {
-            name:'溢价率',
-            type:'line',
-            xAxisIndex: 1,
-            yAxisIndex: 2,
-            hoverAnimation: false,
-            data: data.data.discount
+
+        .comment-author {
+            text-align: right;
+            font-size: 20px;
         }
-    ]
-};
-setInterval(function () {
 
-    $.getJSON('/data/get_nxb_quota', {
-            'date':{{date}},
-            'time':datatime,
-            'code':{{code}}
-         },function (new_data) {
-
-       if(new_data.succeed == 0){
-       datatime = new_data.time;
-       for (var i=0; i<new_data.data.time.length; i++){
-
-       data.data.time.push(new_data.data.time[i]);
-       data.data.last_price.push(new_data.data.last_price[i]);
-       data.data.svs_price.push(new_data.data.svs_price[i]);
-       data.data.amount.push(new_data.data.amount[i]);
-       data.data.discount.push(new_data.data.discount[i])
-       }
-
-       }
-
-    myChart.setOption({
-        xAxis : [
-        {
-            data: data.data.time
-        },
-        {
-            data: data.data.time,
+        .comment-area {
+            left: 0px;
+            right: 0px;
+            position: relative;
         }
-        ],
-        series: [{
-            data: data.data.last_price
-        },
-        {
-        data: data.data.svs_price
-        },
-        {
-        data: data.data.amount
-        },
-        {
-        data: data.data.discount
-        }]
-    });
-});
 
-}, 40000);
+        .comment {
+            position: relative;
+        }
 
-myChart.setOption(option);
-});
+        .modal {
+            top: 200px;
+        }
 
- $.getJSON('/data/get_nxb_price', {
-            'code':{{code}}
-         },function (quota_data) {
+        .spliter {
+            border: 0;
+            height: 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
 
-       if(quota_data.succeed == 0){
-       $("#open").text(quota_data.data.open_price);
-       $("#close").text(quota_data.data.close_price);
-       $("#amount").text(parseInt(quota_data.data.business_amount));
-       $("#different").text(quota_data.data.different);
-       $("#high").text(quota_data.data.high_price);
-       $("#low").text(quota_data.data.low_price);
-       $("#new").text(quota_data.data.last_price);
-       $("#net").text(quota_data.data.svs_last_price);
-       $("#discount").text(quota_data.discount);
-       $("#sell5").text(quota_data.data.sale_price5);
-       $("#sell4").text(quota_data.data.sale_price4);
-       $("#sell3").text(quota_data.data.sale_price3);
-       $("#sell2").text(quota_data.data.sale_price2);
-       $("#sell1").text(quota_data.data.sale_price1);
-       $("#v-sell5").text(parseInt(quota_data.data.sale_amount5));
-       $("#v-sell4").text(parseInt(quota_data.data.sale_amount4));
-       $("#v-sell3").text(parseInt(quota_data.data.sale_amount3));
-       $("#v-sell2").text(parseInt(quota_data.data.sale_amount2));
-       $("#v-sell1").text(parseInt(quota_data.data.sale_amount1));
-       $("#buy1").text(quota_data.data.buy_price1);
-       $("#buy2").text(quota_data.data.buy_price2);
-       $("#buy3").text(quota_data.data.buy_price3);
-       $("#buy4").text(quota_data.data.buy_price4);
-       $("#buy5").text(quota_data.data.buy_price5);
-       $("#v-buy1").text(parseInt(quota_data.data.buy_amount1));
-       $("#v-buy2").text(parseInt(quota_data.data.buy_amount2));
-       $("#v-buy3").text(parseInt(quota_data.data.buy_amount3));
-       $("#v-buy4").text(parseInt(quota_data.data.buy_amount4));
-       $("#v-buy5").text(parseInt(quota_data.data.buy_amount5));
-       }
+        .pagination {
+            position: relative;
+            margin: auto;
+        }
 
-      });
+        .comment-area img {
+            max-width: 500px;
+        }
 
 
-	setInterval(function () {
+    </style>
 
-    $.getJSON('/data/get_nxb_price', {
-            'code':{{code}}
-         },function (quota_data) {
+    <script src="//cdn.bootcss.com/echarts/3.4.0/echarts.min.js"></script>
 
-       if(quota_data.succeed == 0){
-       $("#open").text(quota_data.data.open_price);
-       $("#close").text(quota_data.data.close_price);
-       $("#amount").text(parseInt(quota_data.data.business_amount));
-       $("#different").text(quota_data.data.different);
-       $("#high").text(quota_data.data.high_price);
-       $("#low").text(quota_data.data.low_price);
-       $("#new").text(quota_data.data.last_price);
-       $("#net").text(quota_data.data.svs_last_price);
-       $("#discount").text(quota_data.discount);
-       $("#sell5").text(quota_data.data.sale_price5);
-       $("#sell4").text(quota_data.data.sale_price4);
-       $("#sell3").text(quota_data.data.sale_price3);
-       $("#sell2").text(quota_data.data.sale_price2);
-       $("#sell1").text(quota_data.data.sale_price1);
-       $("#v-sell5").text(parseInt(quota_data.data.sale_amount5));
-       $("#v-sell4").text(parseInt(quota_data.data.sale_amount4));
-       $("#v-sell3").text(parseInt(quota_data.data.sale_amount3));
-       $("#v-sell2").text(parseInt(quota_data.data.sale_amount2));
-       $("#v-sell1").text(parseInt(quota_data.data.sale_amount1));
-       $("#buy1").text(quota_data.data.buy_price1);
-       $("#buy2").text(quota_data.data.buy_price2);
-       $("#buy3").text(quota_data.data.buy_price3);
-       $("#buy4").text(quota_data.data.buy_price4);
-       $("#buy5").text(quota_data.data.buy_price5);
-       $("#v-buy1").text(parseInt(quota_data.data.buy_amount1));
-       $("#v-buy2").text(parseInt(quota_data.data.buy_amount2));
-       $("#v-buy3").text(parseInt(quota_data.data.buy_amount3));
-       $("#v-buy4").text(parseInt(quota_data.data.buy_amount4));
-       $("#v-buy5").text(parseInt(quota_data.data.buy_amount5));
-       }
+    <div class="container-fluid main">
 
-      });
+        <div class="col-md-2 col-xs-8">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    {{ name }}{{ code }} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="/quota/nxb?date={{ date }}&code=878002">沪深300看涨</a></li>
+                    <li><a href="/quota/nxb?date={{ date }}&code=878003">沪深300看跌</a></li>
+                    <li><a href="/quota/nxb?date={{ date }}&code=878004">创业看涨</a></li>
+                    <li><a href="/quota/nxb?date={{ date }}&code=878005">创业看跌</a></li>
+                    <li><a href="/quota/nxb?date={{ date }}&code=878006">上证50看涨</a></li>
+                    <li><a href="/quota/nxb?date={{ date }}&code=878007">上证50看跌</a></li>
+                    <li><a href="/quota/nxb?date={{ date }}&code=878008">中证500看涨</a></li>
+                    <li><a href="/quota/nxb?date={{ date }}&code=878009">中证500看跌</a></li>
+                </ul>
+            </div>
+            <hr>
+            <div class="panel panel-default">
+                <div class="panel-body" id="quote">
+                    <div class="row">
+                        <div class="col-xs-6">卖5: <span class="sell" id="sell5"></span></div>
+                        <div class="col-xs-6"><span id="v-sell5"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">卖4: <span class="sell" id="sell4"></span></div>
+                        <div class="col-xs-6"><span id="v-sell4"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">卖3: <span class="sell" id="sell3"></span></div>
+                        <div class="col-xs-6"><span id="v-sell3"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">卖2: <span class="sell" id="sell2"></span></div>
+                        <div class="col-xs-6"><span id="v-sell2"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">卖1: <span class="sell" id="sell1"></span></div>
+                        <div class="col-xs-6"><span id="v-sell1"></span></div>
+                    </div>
 
-    }, 10000);
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-xs-6">买1: <span class="buy" id="buy1"></span></div>
+                        <div class="col-xs-6"><span id="v-buy1"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">买2: <span class="buy" id="buy2"></span></div>
+                        <div class="col-xs-6"><span id="v-buy2"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">买3: <span class="buy" id="buy3"></span></div>
+                        <div class="col-xs-6"><span id="v-buy3"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">买4: <span class="buy" id="buy4"></span></div>
+                        <div class="col-xs-6"><span id="v-buy4"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">买5: <span class="buy" id="buy5"></span></div>
+                        <div class="col-xs-6"><span id="v-buy5"></span></div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+
+                    <div class="row">
+                        <div class="col-xs-6">今开:<span id="open"></span></div>
+                        <div class="col-xs-6">昨收:<span id="close"></span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-6">最低:<span id="low"></span></div>
+                        <div class="col-xs-6">最高:<span id="high"></span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-6">净值:<span id="net"></span></div>
+                        <div class="col-xs-6">最新:<span id="new"></span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-6">溢价:<span id="discount"></span></div>
+                        <div class="col-xs-6">价差:<span id="different"></span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-8">总量:<span id="amount"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <h4>分时成交</h4>
+            <div class="panel panel-default">
+
+                <table class="table table-striped" id="deal">
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-8 col-xs-8">
 
 
-    $.getJSON('/data/get_nxb_deal', {
-            'code':{{code}}
-         },function (nxb_deal) {
+            <div class="button-group">
+                <a href="#" type="button" class="button active">日内</a>
+                <a href="/quota/nxb_history?code={{ code }}" type="button" class="button">历史</a>
+            </div>
 
-       if(nxb_deal.succeed == 0){
+            <div class="row">
 
-       $("#deal").html("")
+                <div id="chart"></div>
+
+                <br>
+
+                <hr>
+
+                {% if session['logged_in'] %}
+
+                    <div class="row">
+                        <div class="col-xs-2 comment-author">
+                            <img style="width:45px" src="{{ url_for('homepage') }}{{ g.user.avatar }}"> :
+                        </div>
+                        <form class="editor" action="/quota/{{ post.id }}/comment" method="post" role="form">
+                            {{ commentform.hidden_tag() }}
+                            <input type=hidden value="/quota/nxb?code={{ post.id }}" name="back">
+                            <div class="col-xs-7">
+
+                                {{ commentform.body(rows=2, class='form-control') }}
+                                {% for error in commentform.body.errors %}
+                                    {{ error }}
+                                {% endfor %}
+
+                            </div>
+                            <div class="col-xs-2">
+                                <button class="button button-rounded button-raised button-action" type="submit"
+                                        name="form-name"
+                                        value="comment">提交
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                {% else %}
+
+                    <div class="row">
+                        <div class="col-xs-2 comment-author">
+                            <img style="width:45px" src="{{ url_for('homepage') }}static/avatar/x.png"> :
+                        </div>
+                        <div class="col-xs-6">
+
+                            <textarea name="title" rows="2" placeholder="请登陆后评论" class='form-control'
+                                      disabled></textarea>
+
+                        </div>
+                        <div class="col-xs-4">
+                            <a class="button button-rounded button-raised" href="{{ url_for('login_page') }}">登陆</a>
+                        </div>
+                    </div>
+
+                {% endif %}
+
+                <br>
+                <br>
+
+                <div class="comment-area well" id="comment-area">
+                    <hr class="spliter">
+
+                    {% if comments == [] %}
+
+                        目前还没有人评论哦～～～
+
+                    {% else %}
 
 
-       for (var i=0; i<nxb_deal.data.price.length; i++){
+                        {% for comment in comments %}
+
+                            <div class="media-left comment">
+                                <a class="media-left" href="/people/{{ comment.commented_user.id }}" target="_blank">
+                                    <img style="width:45px;" class="media-object"
+                                         src="{{ url_for('homepage') }}{{ comment.commented_user.avatar }}" alt=" ">
+                                </a>
+                                <div class="media-body">
+                                    <h4 class="media-heading">
+                                        <a href="/people/{{ comment.commented_user.id }}">{{ comment.commented_user.nickname }}</a>
+                                        <small>&nbsp{{ momentjs(comment.time_comment).fromNow() }} &nbsp</small>
+                                    </h4>
+                                    <div>{{ Markup(markdown(comment.body)) }}</div>
+                                    {% if session['logged_in'] %}
+                                        <a type="button" class="glyphicon glyphicon-comment" data-toggle="modal"
+                                           data-target="#myModal{{ comment.id }}">评论</a>
+                                        <br>
+                                    {% endif %}
+
+                                    {% for reply in comment.replies.all() %}
+
+                                        <br>
+
+                                        <div class="media-right reply">
+                                            <a class="media-right" href="/people/{{ reply.commented_user.id }}"
+                                               target="_blank">
+                                                <img style="width:35px;" class="media-object"
+                                                     src="{{ url_for('homepage') }}{{ reply.commented_user.avatar }}"
+                                                     alt=" ">
+                                            </a>
+                                            <div class="media-body">
+                                                <h5 class="media-heading"><a
+                                                        href="/people/{{ reply.commented_user.id }}">{{ reply.commented_user.nickname }}</a>
+                                                    <small>&nbsp{{ momentjs(reply.time_comment).fromNow() }} &nbsp
+                                                    </small>
+                                                </h5>
+                                                {{ Markup(markdown(reply.body)) }}
+                                            </div>
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+                                <!-- Button trigger modal -->
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="myModal{{ comment.id }}" tabindex="-1" role="dialog"
+                                     aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"><span
+                                                        aria-hidden="true">&times;</span><span
+                                                        class="sr-only">Close</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">
+                                                    回复: {{ comment.commented_user.nickname }}
+                                                    <img
+                                                            style="width:40px"
+                                                            src="
+                                                                    {{ url_for('homepage') }}{{ comment.commented_user.avatar }}">
+                                                </h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{ comment.body }}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form class="editor" action="/quota/{{ post.id }}/reply" method="post"
+                                                      role="form">
+                                                    {{ commentform.hidden_tag() }}
+                                                    <div class="col-md-9">
+
+                                                        {{ commentform.body(rows=2, class='form-control') }}
+                                                        {% for error in commentform.body.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+
+                                                    </div>
+                                                    <input type=hidden value="/quota/nxb?code={{ post.id }}"
+                                                           name="back">
+                                                    <div class="col-md-2">
+                                                        <button class="btn btn-lg btn-primary" type="submit"
+                                                                name="reply"
+                                                                value={{ comment.id }}>提交
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="spliter">
+                        {% endfor %}
+                        <nav class="page" style="text-align:center">
+                            <ul class="pagination pagination-sm">
+                                <li><a href="/quota/nxb?code={{ post.id }}&page=1#comment-area">&laquo;</a></li>
+                                {% for i in page_info[:-1] %}
+                                    <li class="{{ i['active'] }}"><a
+                                            href="/quota/nxb?code={{ post.id }}&page={{ i['page'] }}#comment-area">{{ i['page'] }}</a>
+                                    </li>
+                                {% endfor %}
+                                <li>
+                                    <a href="/quota/nxb?code={{ post.id }}&page={{ page_info[-1]['page'] }}#comment-area">&raquo;</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                    {% endif %}
+                </div>
+
+                <script type="text/javascript">
+                    // 基于准备好的dom，初始化echarts实例
+                    var myChart = echarts.init(document.getElementById('chart'));
+                    myChart.showLoading();
+                    $.getJSON('/data/get_nxb_quota', {
+                        'date':{{date}},
+                        'time': '09:15',
+                        'code':{{code}}
+                    }, function (data) {
+                        myChart.hideLoading();
+
+                        // 指定图表的配置项和数据
+                        var datatime = data.time;
+                        var option = {
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: {
+                                    animation: false
+                                }
+                            },
+                            color: ['rgba(194,53,49,1)', 'rgba(47,69,84,1)', 'rgba(20,20,20,0.4)', 'rgba(47,69,84,1)', '#2f4554'],
+                            legend: {
+                                data: ['价格', '净值', '交易量', '溢价率'],
+                                x: 'left'
+                            },
+                            toolbox: {
+                                feature: {
+                                    dataZoom: {
+                                        yAxisIndex: 'none'
+                                    },
+                                    restore: {},
+                                    saveAsImage: {}
+                                }
+                            },
+                            dataZoom: [
+                                {
+                                    show: true,
+                                    realtime: false,
+                                    start: 50,
+                                    end: 100,
+                                    xAxisIndex: [0, 1]
+                                },
+                                {
+                                    type: 'inside',
+                                    realtime: false,
+                                    start: 30,
+                                    end: 70,
+                                    xAxisIndex: [0, 1]
+                                }
+                            ],
+                            grid: [{
+                                left: 50,
+                                right: 30,
+                                height: '45%'
+                            }, {
+                                left: 50,
+                                right: 30,
+                                top: '70%',
+                                height: '15%'
+                            }],
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    boundaryGap: true,
+                                    axisLine: {onZero: true},
+                                    data: data.data.time
+                                },
+                                {
+                                    gridIndex: 1,
+                                    type: 'category',
+                                    boundaryGap: true,
+                                    axisLine: {onZero: true},
+                                    data: data.data.time,
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    name: '交易价格',
+                                    type: 'value',
+                                    min: data.min - 0.01
+                                },
+                                {
+                                    name: '交易量',
+                                    type: 'value',
+                                    max: 500000
+                                },
+                                {
+                                    gridIndex: 1,
+                                    name: '溢价率',
+                                    type: 'value',
+                                    axisLabel: {
+                                        formatter: '{value}%'
+                                    }
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '价格',
+                                    type: 'line',
+                                    symbolSize: 8,
+                                    hoverAnimation: false,
+                                    data: data.data.last_price
+                                },
+                                {
+                                    name: '净值',
+                                    type: 'line',
+                                    symbolSize: 8,
+                                    hoverAnimation: false,
+                                    data: data.data.svs_price
+                                },
+                                {
+                                    name: '交易量',
+                                    type: 'bar',
+                                    yAxisIndex: 1,
+                                    hoverAnimation: false,
+                                    data: data.data.amount
+                                },
+                                {
+                                    name: '溢价率',
+                                    type: 'line',
+                                    xAxisIndex: 1,
+                                    yAxisIndex: 2,
+                                    hoverAnimation: false,
+                                    data: data.data.discount
+                                }
+                            ]
+                        };
+                        setInterval(function () {
+
+                            $.getJSON('/data/get_nxb_quota', {
+                                'date':{{date}},
+                                'time': datatime,
+                                'code':{{code}}
+                            }, function (new_data) {
+
+                                if (new_data.succeed == 0) {
+                                    datatime = new_data.time;
+                                    for (var i = 0; i < new_data.data.time.length; i++) {
+
+                                        data.data.time.push(new_data.data.time[i]);
+                                        data.data.last_price.push(new_data.data.last_price[i]);
+                                        data.data.svs_price.push(new_data.data.svs_price[i]);
+                                        data.data.amount.push(new_data.data.amount[i]);
+                                        data.data.discount.push(new_data.data.discount[i])
+                                    }
+
+                                }
+
+                                myChart.setOption({
+                                    xAxis: [
+                                        {
+                                            data: data.data.time
+                                        },
+                                        {
+                                            data: data.data.time,
+                                        }
+                                    ],
+                                    series: [{
+                                        data: data.data.last_price
+                                    },
+                                        {
+                                            data: data.data.svs_price
+                                        },
+                                        {
+                                            data: data.data.amount
+                                        },
+                                        {
+                                            data: data.data.discount
+                                        }]
+                                });
+                            });
+
+                        }, 40000);
+
+                        myChart.setOption(option);
+                    });
+
+                    $.getJSON('/data/get_nxb_price', {
+                        'code':{{code}}
+                    }, function (quota_data) {
+
+                        if (quota_data.succeed == 0) {
+                            $("#open").text(quota_data.data.open_price);
+                            $("#close").text(quota_data.data.close_price);
+                            $("#amount").text(parseInt(quota_data.data.business_amount));
+                            $("#different").text(quota_data.data.different);
+                            $("#high").text(quota_data.data.high_price);
+                            $("#low").text(quota_data.data.low_price);
+                            $("#new").text(quota_data.data.last_price);
+                            $("#net").text(quota_data.data.svs_last_price);
+                            $("#discount").text(quota_data.discount);
+                            $("#sell5").text(quota_data.data.sale_price5);
+                            $("#sell4").text(quota_data.data.sale_price4);
+                            $("#sell3").text(quota_data.data.sale_price3);
+                            $("#sell2").text(quota_data.data.sale_price2);
+                            $("#sell1").text(quota_data.data.sale_price1);
+                            $("#v-sell5").text(parseInt(quota_data.data.sale_amount5));
+                            $("#v-sell4").text(parseInt(quota_data.data.sale_amount4));
+                            $("#v-sell3").text(parseInt(quota_data.data.sale_amount3));
+                            $("#v-sell2").text(parseInt(quota_data.data.sale_amount2));
+                            $("#v-sell1").text(parseInt(quota_data.data.sale_amount1));
+                            $("#buy1").text(quota_data.data.buy_price1);
+                            $("#buy2").text(quota_data.data.buy_price2);
+                            $("#buy3").text(quota_data.data.buy_price3);
+                            $("#buy4").text(quota_data.data.buy_price4);
+                            $("#buy5").text(quota_data.data.buy_price5);
+                            $("#v-buy1").text(parseInt(quota_data.data.buy_amount1));
+                            $("#v-buy2").text(parseInt(quota_data.data.buy_amount2));
+                            $("#v-buy3").text(parseInt(quota_data.data.buy_amount3));
+                            $("#v-buy4").text(parseInt(quota_data.data.buy_amount4));
+                            $("#v-buy5").text(parseInt(quota_data.data.buy_amount5));
+                        }
+
+                    });
 
 
-              if(nxb_deal.data.direction[i] == 1){
-              var deal = $("<tr class='danger'></tr>").html("<td>"+nxb_deal.data.time[i]+"</td>" +"<td><b>"+ nxb_deal.data.price[i] + "</b></td>"+ "<td class='buy'>" + "↑"+nxb_deal.data.amount[i] + "</td>");
-              }else{
-              var deal = $("<tr class='success'></tr>").html("<td>"+nxb_deal.data.time[i]+"</td>" +"<td><b>"+ nxb_deal.data.price[i] + "</b></td>"+ "<td class='sell'>"+ "↓" +nxb_deal.data.amount[i] + "</td>");
-              }
+                    setInterval(function () {
+
+                        $.getJSON('/data/get_nxb_price', {
+                            'code':{{code}}
+                        }, function (quota_data) {
+
+                            if (quota_data.succeed == 0) {
+                                $("#open").text(quota_data.data.open_price);
+                                $("#close").text(quota_data.data.close_price);
+                                $("#amount").text(parseInt(quota_data.data.business_amount));
+                                $("#different").text(quota_data.data.different);
+                                $("#high").text(quota_data.data.high_price);
+                                $("#low").text(quota_data.data.low_price);
+                                $("#new").text(quota_data.data.last_price);
+                                $("#net").text(quota_data.data.svs_last_price);
+                                $("#discount").text(quota_data.discount);
+                                $("#sell5").text(quota_data.data.sale_price5);
+                                $("#sell4").text(quota_data.data.sale_price4);
+                                $("#sell3").text(quota_data.data.sale_price3);
+                                $("#sell2").text(quota_data.data.sale_price2);
+                                $("#sell1").text(quota_data.data.sale_price1);
+                                $("#v-sell5").text(parseInt(quota_data.data.sale_amount5));
+                                $("#v-sell4").text(parseInt(quota_data.data.sale_amount4));
+                                $("#v-sell3").text(parseInt(quota_data.data.sale_amount3));
+                                $("#v-sell2").text(parseInt(quota_data.data.sale_amount2));
+                                $("#v-sell1").text(parseInt(quota_data.data.sale_amount1));
+                                $("#buy1").text(quota_data.data.buy_price1);
+                                $("#buy2").text(quota_data.data.buy_price2);
+                                $("#buy3").text(quota_data.data.buy_price3);
+                                $("#buy4").text(quota_data.data.buy_price4);
+                                $("#buy5").text(quota_data.data.buy_price5);
+                                $("#v-buy1").text(parseInt(quota_data.data.buy_amount1));
+                                $("#v-buy2").text(parseInt(quota_data.data.buy_amount2));
+                                $("#v-buy3").text(parseInt(quota_data.data.buy_amount3));
+                                $("#v-buy4").text(parseInt(quota_data.data.buy_amount4));
+                                $("#v-buy5").text(parseInt(quota_data.data.buy_amount5));
+                            }
+
+                        });
+
+                    }, 10000);
 
 
-              $("#deal").append(deal);
-       }
+                    $.getJSON('/data/get_nxb_deal', {
+                        'code':{{code}}
+                    }, function (nxb_deal) {
 
-       }
+                        if (nxb_deal.succeed == 0) {
 
-      });
-
-
-    setInterval(function () {
-
-    $.getJSON('/data/get_nxb_deal', {
-            'code':{{code}}
-         },function (nxb_deal) {
-
-       if(nxb_deal.succeed == 0){
-
-       $("#deal").html("")
+                            $("#deal").html("")
 
 
-       for (var i=0; i<nxb_deal.data.price.length; i++){
+                            for (var i = 0; i < nxb_deal.data.price.length; i++) {
 
 
-              if(nxb_deal.data.direction[i] == 1){
-              var deal = $("<tr class='danger'></tr>").html("<td>"+nxb_deal.data.time[i]+"</td>" +"<td><b>"+ nxb_deal.data.price[i] + "</b></td>"+ "<td class='buy'>" + "↑"+nxb_deal.data.amount[i] + "</td>");
-              }else{
-              var deal = $("<tr class='success'></tr>").html("<td>"+nxb_deal.data.time[i]+"</td>" +"<td><b>"+ nxb_deal.data.price[i] + "</b></td>"+ "<td class='sell'>"+ "↓" +nxb_deal.data.amount[i] + "</td>");
-              }
+                                if (nxb_deal.data.direction[i] == 1) {
+                                    var deal = $("<tr class='danger'></tr>").html("<td>" + nxb_deal.data.time[i] + "</td>" + "<td><b>" + nxb_deal.data.price[i] + "</b></td>" + "<td class='buy'>" + "↑" + nxb_deal.data.amount[i] + "</td>");
+                                } else {
+                                    var deal = $("<tr class='success'></tr>").html("<td>" + nxb_deal.data.time[i] + "</td>" + "<td><b>" + nxb_deal.data.price[i] + "</b></td>" + "<td class='sell'>" + "↓" + nxb_deal.data.amount[i] + "</td>");
+                                }
 
 
-              $("#deal").append(deal);
-       }
+                                $("#deal").append(deal);
+                            }
 
-       }
+                        }
 
-      });
-
-    }, 10000);
+                    });
 
 
+                    setInterval(function () {
+
+                        $.getJSON('/data/get_nxb_deal', {
+                            'code':{{code}}
+                        }, function (nxb_deal) {
+
+                            if (nxb_deal.succeed == 0) {
+
+                                $("#deal").html("")
 
 
+                                for (var i = 0; i < nxb_deal.data.price.length; i++) {
 
 
+                                    if (nxb_deal.data.direction[i] == 1) {
+                                        var deal = $("<tr class='danger'></tr>").html("<td>" + nxb_deal.data.time[i] + "</td>" + "<td><b>" + nxb_deal.data.price[i] + "</b></td>" + "<td class='buy'>" + "↑" + nxb_deal.data.amount[i] + "</td>");
+                                    } else {
+                                        var deal = $("<tr class='success'></tr>").html("<td>" + nxb_deal.data.time[i] + "</td>" + "<td><b>" + nxb_deal.data.price[i] + "</b></td>" + "<td class='sell'>" + "↓" + nxb_deal.data.amount[i] + "</td>");
+                                    }
 
 
-			</script>
+                                    $("#deal").append(deal);
+                                }
 
-		</div>
-	</div>
+                            }
 
-</div>
+                        });
+
+                    }, 10000);
+
+
+                </script>
+
+            </div>
+        </div>
+
+    </div>
 
 
 {% endblock %}

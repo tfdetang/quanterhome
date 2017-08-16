@@ -1,72 +1,70 @@
-{% extends "header.html"%}
+{% extends "header.html" %}
 
 {% block body %}
-<link href="{{ url_for('static', filename='css/bootstrap-markdown.min.css') }}" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <link href="{{ url_for('static', filename='css/bootstrap-markdown.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
 
-<style type="text/css">
+    <style type="text/css">
 
-.head
-{
-margin-top:-25px;
-height:200px;
-background:url({{ url_for('static', filename='images/post-bg2.jpg')}});
-box-shadow: 2px 1px 3px 1px #aaaaaa;
-}
+        .head {
+            margin-top: -25px;
+            height: 200px;
+            background: url({{ url_for('static', filename='images/post-bg2.jpg')}});
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
 
-.editor
-{
-margin: auto;
-margin-top:-120px;
-left:0px;
-right:0px;
-max-width:1000px;
-min-width:400px;
-}
+        .editor {
+            margin: auto;
+            margin-top: -120px;
+            left: 0px;
+            right: 0px;
+            max-width: 1000px;
+            min-width: 400px;
+        }
 
-.Title
-{
-text-align:left;
-color:white;
-font-size:35px;
-}
+        .Title {
+            text-align: left;
+            color: white;
+            font-size: 35px;
+        }
 
-</style>
+    </style>
 
-<div class="well head">
+    <div class="well head">
 
-</div>
+    </div>
 
-<form class="editor" action="" method="post" role="form" name="editor">
-	<div class="Title">发起主题:</div>
+    <form class="editor" action="" method="post" role="form" name="editor">
+        <div class="Title">发起主题:</div>
 
-	<div class="input-group">
-		<input name="title" type="text" size="60" placeholder="标题..." class='form-control'>
-		<span class="input-group-addon">#{{theme.name}}</span>
-	</div>
+        <div class="input-group">
+            <input name="title" type="text" size="60" placeholder="标题..." class='form-control'>
+            <span class="input-group-addon">#{{ theme.name }}</span>
+        </div>
 
-	<br>
-	<br>
-	<textarea name="body" id="markdown" rows="30"></textarea>
-	<script>
+        <br>
+        <br>
+        <textarea name="body" id="markdown" rows="30"></textarea>
+        <script>
 
-	var simplemde = new SimpleMDE({ element: $("#markdown")[0] });
+            var simplemde = new SimpleMDE({element: $("#markdown")[0]});
 
-	</script>
-	<br>
-	<div class="text-right">
-		<button class="button button-3d button-action button-rounded" type="submit" name="theme-id" value="{{theme.id}}"
-		        onclick="editor.action='/{{theme.url}}/post'; editor.submit()">提交
-		</button>
-		<button class="button button-3d button-primary button-rounded" type="submit" name="theme-id"
-		        value="{{theme.id}}"
-		        onclick="editor.action='/people/save_draft'; editor.submit()">保存草稿
-		</button>
-		<a class="button button-3d button-rounded" href="/lobby/{{theme.url}}">返回</a>
-	</div>
-</form>
+        </script>
+        <br>
+        <div class="text-right">
+            <button class="button button-3d button-action button-rounded" type="submit" name="theme-id"
+                    value="{{ theme.id }}"
+                    onclick="editor.action='/{{ theme.url }}/post'; editor.submit()">提交
+            </button>
+            <button class="button button-3d button-primary button-rounded" type="submit" name="theme-id"
+                    value="{{ theme.id }}"
+                    onclick="editor.action='/people/save_draft'; editor.submit()">保存草稿
+            </button>
+            <a class="button button-3d button-rounded" href="/lobby/{{ theme.url }}">返回</a>
+        </div>
+    </form>
 
 
 {% endblock %}

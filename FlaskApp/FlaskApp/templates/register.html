@@ -1,89 +1,90 @@
-{% extends "header.html"%}
+{% extends "header.html" %}
 
 {% block body %}
 
-<style type="text/css">
-body{
-background:url({{ url_for('static', filename='images/3.jpg')}});
-background-size:100% auto;
-}
+    <style type="text/css">
+        body {
+            background: url({{ url_for('static', filename='images/3.jpg')}});
+            background-size: 100% auto;
+        }
 
-form
-{margin-left:40px;
-margin-right:40px;
-margin-top:20px;
-margin-bottom:20px;}
+        form {
+            margin-left: 40px;
+            margin-right: 40px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
 
+        .panel {
+            margin-top: 100px;
+            max-width: 400px;
+            min-width: 250px;
+            box-shadow: 3px 4px 3px 2px #666666;
+        }
 
-.panel{
-margin-top:100px;
-max-width:400px;
-min-width:250px;
-box-shadow: 3px 4px 3px 2px #666666;
-}
-
-</style>
-
-
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-4"></div>
+    </style>
 
 
-		<div class="col-xs-4">
-			<div class="panel panel-default">
-				<div class="panel-heading"><h4 class="form-signin-heading">欢迎加入!</h4></div>
-				<form action="" method="post" class="form-signin" role="form">
-
-					{{registform.hidden_tag()}}
-
-					<div class="row form-group">
-						请输入您常用的邮箱:<br>
-						{{registform.email(size=20, placeholder='user@Email.com', class='form-control')}}<br>
-						{% for error in registform.email.errors %}
-						<span style="color: red;">[{{error}}]</span>
-						{% endfor %}
-					</div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4"></div>
 
 
-					<div class="row form-group">
-						请选择一个昵称:<br>
-						{{registform.nickname(size=20, placeholder='昵称', class='form-control')}}<br>
-						{% for error in registform.nickname.errors %}
-						<span style="color: red;">[{{error}}]</span>
-						{% endfor %}
-					</div>
+            <div class="col-xs-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h4 class="form-signin-heading">欢迎加入!</h4></div>
+                    <form action="" method="post" class="form-signin" role="form">
+
+                        {{ registform.hidden_tag() }}
+
+                        <div class="row form-group">
+                            请输入您常用的邮箱:<br>
+                            {{ registform.email(size=20, placeholder='user@Email.com', class='form-control') }}<br>
+                            {% for error in registform.email.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </div>
 
 
-					<div class="row form-group">
-						请输入您的密码:<br>
-						{{registform.password(size=20, class='form-control')}}<br>
-						{% for error in registform.password.errors %}
-						<span style="color: red;">[{{error}}]</span>
-						{% endfor %}
-					</div>
+                        <div class="row form-group">
+                            请选择一个昵称:<br>
+                            {{ registform.nickname(size=20, placeholder='昵称', class='form-control') }}<br>
+                            {% for error in registform.nickname.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </div>
 
 
-					<div class="row form-group">
-						请重复您的密码:<br>
-						{{registform.repeat(size=20, class='form-control')}}<br>
-						{% for error in registform.repeat.errors %}
-						<span style="color: red;">[{{error}}]</span>
-						{% endfor %}
-					</div>
+                        <div class="row form-group">
+                            请输入您的密码:<br>
+                            {{ registform.password(size=20, class='form-control') }}<br>
+                            {% for error in registform.password.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </div>
 
-					<hr>
-					<button class="button button-rounded button-raised button-primary" type="submit" name="form-name"
-					        value="registform">注册
-					</button>
-					&nbsp;&nbsp;&nbsp;<a href="/login">已有账号，去登陆</a>
-				</form>
 
-			</div>
-		</div>
-		<div class="col-xs-4"></div>
-	</div>
-</div>
+                        <div class="row form-group">
+                            请重复您的密码:<br>
+                            {{ registform.repeat(size=20, class='form-control') }}<br>
+                            {% for error in registform.repeat.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </div>
+
+                        <hr>
+                        <button class="button button-rounded button-raised button-primary" type="submit"
+                                name="form-name"
+                                value="registform">注册
+                        </button>
+                        &nbsp;&nbsp;&nbsp;<a href="/login">已有账号，去登陆</a>
+                    </form>
+
+                </div>
+            </div>
+            <div class="col-xs-4"></div>
+        </div>
+    </div>
 
 
 {% endblock %}
