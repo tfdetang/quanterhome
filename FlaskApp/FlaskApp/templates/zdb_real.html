@@ -1,0 +1,234 @@
+{% extends "header.html" %}
+
+{% block body %}
+
+    <style type="text/css">
+
+        .main {
+            max-width: 1400px;
+            min-width: 1000px;
+        }
+
+        .panel {
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
+
+        #chart {
+            min-width: 400px;
+            height: 400px;
+        }
+
+        .buy {
+            color: red
+        }
+
+        .sell {
+            color: green
+        }
+
+
+    </style>
+
+    <script src="//cdn.bootcss.com/echarts/3.4.0/echarts.min.js"></script>
+
+    <div class="container-fluid main">
+
+        <div class="col-md-2">
+
+
+            <div class="button-group">
+
+                <a href="/quota/zdb_history" type="button" class="button">涨跌宝历史</a>
+                <a href="#" type="button" class="button active">涨跌宝实时</a>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+
+            <div class="row">
+                <div id="chart"></div>
+
+                <script type="text/javascript">
+                    // 基于准备好的dom，初始化echarts实例
+                    var myChart = echarts.init(document.getElementById('chart'));
+                    myChart.showLoading();
+
+                    setInterval(function () {
+
+                        $.getJSON('/data/get_zdb_real', {}, function (new_data) {
+                            if (new_data.succeed == 0) {
+                                myChart.hideLoading();
+                                datatime = new_data.data.datetime;
+                                cyb = new_data.data.cyb_change;
+                                amount_up = new_data.data.amount_up
+                                his_up = new_data.data.his_up
+                                amount_down = new_data.data.amount_down
+                                his_down = new_data.data.his_down
+                                k = new_data.data.k
+                                p_up = amount_up / (amount_up + amount_down)
+                                p_down = amount_down / (amount_up + amount_down)
+
+                                $("#amount_up").text(amount_up);
+                                $("#his_up").text(his_up);
+                                $("#amount_down").text(amount_down);
+                                $("#his_down").text(his_down);
+                                $("#k").text(k);
+                                $("#datatime").text(datatime);
+                                $("#cyb").text(cyb + "%");
+                                $("#p_up").text(Math.round(p_up * 100) + "%");
+                                $("#p_down").text(Math.round(p_down * 100) + "%");
+
+                                if (cyb > 0) {
+                                    $("#gain_up").text(Math.round((1 / k) * 300 * cyb) / 100 + "%");
+                                    $("#gain_down").text(Math.round(-300 * cyb) / 100 + "%");
+                                    $("#cyb,#gain_up,#gain_down").removeClass()
+                                    $("#cyb,#gain_up").addClass("buy")
+                                    $("#gain_down").addClass("sell")
+
+                                } else {
+                                    $("#cyb,#gain_up,#gain_down").removeClass()
+                                    $("#cyb,#gain_up").addClass("sell")
+                                    $("#gain_down").addClass("buy")
+                                    $("#gain_down").text(Math.round((k / 1) * -300 * cyb) / 100 + "%");
+                                    $("#gain_up").text(Math.round(300 * cyb) / 100 + "%");
+                                }
+
+                            }
+
+                            var colorList = [
+                                '#59c5a7', '#fa827d'
+                            ];
+
+                            var up_data = [[-1.4, (-1.4 * 3).toFixed(2)], [-1.2, (-1.2 * 3).toFixed(2)], [-1, -1 * 3], [-0.8, (-0.8 * 3).toFixed(2)], [-0.6, (-0.6 * 3).toFixed(2)], [-0.4, (-0.4 * 3).toFixed(2)], [-0.2, (-0.2 * 3).toFixed(2)], [0, 0],
+                                [0.2, Math.round((1 / k) * 300 * 0.2) / 100], [0.4, Math.round((1 / k) * 300 * 0.4) / 100], [0.6, Math.round((1 / k) * 300 * 0.6) / 100],
+                                [0.8, Math.round((1 / k) * 300 * 0.8) / 100], [1, Math.round((1 / k) * 300) / 100], [1.2, Math.round((1 / k) * 300 * 1.2) / 100],
+                                [1.4, Math.round((1 / k) * 300 * 1.4) / 100]]
+
+                            var down_data = [[1.4, (-1.4 * 3).toFixed(2)], [1.2, (-1.2 * 3).toFixed(2)], [1, -1 * 3], [0.8, (-0.8 * 3).toFixed(2)], [0.6, (-0.6 * 3).toFixed(2)], [0.4, (-0.4 * 3).toFixed(2)], [0.2, (-0.2 * 3).toFixed(2)], [0, 0],
+                                [-0.2, Math.round((k / 1) * 300 * 0.2) / 100], [-0.4, Math.round((k / 1) * 300 * 0.4) / 100], [-0.6, Math.round((k / 1) * 300 * 0.6) / 100],
+                                [-0.8, Math.round((k / 1) * 300 * 0.8) / 100], [-1, Math.round((k / 1) * 300) / 100], [-1.2, Math.round((k / 1) * 300 * 1.2) / 100],
+                                [-1.4, Math.round((k / 1) * 300 * 1.4) / 100]]
+
+                            option = {
+                                title: {
+                                    text: '涨跌宝收益分布',
+                                    left: 'center'
+                                },
+                                tooltip: {
+                                    trigger: 'axis',
+                                    axisPointer: {
+                                        animation: false
+                                    }
+                                },
+
+                                legend: {
+                                    left: 'left',
+                                    data: ['看涨', '看跌']
+                                },
+                                xAxis: {
+                                    type: 'value',
+                                    name: '涨跌幅%',
+                                    splitLine: {show: false},
+                                    axisLabel: {
+                                        formatter: '{value}%'
+                                    }
+                                },
+                                grid: {
+                                    left: '3%',
+                                    right: '8%',
+                                    bottom: '3%',
+                                    containLabel: true
+                                },
+                                yAxis: {
+                                    type: 'value',
+                                    name: '收益率%',
+                                    axisLabel: {
+                                        formatter: '{value}%'
+                                    }
+                                },
+                                series: [
+                                    {
+                                        name: '看涨',
+                                        type: 'line',
+                                        areaStyle: {normal: {}},
+                                        markArea: {
+                                            data: [[{
+                                                name: '集合竞价',
+                                                xAxis: cyb - 0.01
+                                            }, {
+                                                xAxis: cyb + 0.01
+                                            }]]
+                                        },
+                                        data: up_data
+                                    },
+                                    {
+                                        name: '看跌',
+                                        type: 'line',
+                                        areaStyle: {normal: {}},
+                                        data: down_data
+                                    }
+                                ]
+                            };
+
+
+                        });
+                        myChart.setOption(option);
+                    }, 5000);
+
+
+                </script>
+
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12"><span id="datatime"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-8">看涨: <span class="buy" id="amount_up"></span></div>
+                        <div class="col-md-4"><span id="p_up"></span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-10">看涨盈亏: <span id="gain_up"></span></div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-8">看跌: <span class="sell" id="amount_down"></span></div>
+                        <div class="col-md-4"><span id="p_down"></span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-10">看跌盈亏: <span id="gain_down"></span></div>
+                    </div>
+
+
+                </div>
+                <div class="panel-footer">
+
+                    <div class="row">
+                        <div class="col-md-5">K: <span id="k"></span></div>
+                        <div class="col-md-7">涨跌: <span id="cyb"></span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-10">昨日看涨: <span id="his_up"></span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-10">昨日看跌: <span id="his_down"></span></div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends "header.html" %}
+
+{% block body %}
+
+    <style type="text/css">
+
+        .head {
+            margin-top: -25px;
+            height: 240px;
+            background: url({{ url_for('static', filename='images/post-bg2.jpg')}});
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
+
+        #panel {
+            margin: auto;
+            margin-top: -150px;
+            left: 0px;
+            right: 0px;
+            max-width: 1200px;
+            min-width: 400px;
+        }
+
+
+    </style>
+
+
+    <div class="well head">
+
+    </div>
+
+
+    <div class="container-fluid">
+        <div class="row" id="panel">
+
+            <div class="col-xs-12 col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+
+                        <div class="media">
+                            <a class="media-left media-middle" href="#">
+                                <img style="width:80px;" src="{{ url_for('homepage') }}{{ user.avatar }}" alt=" ">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">{{ user.nickname }}
+                                    <small> 注册时间：{{ user.time_regist }}<br><br>
+                                        <p><span class="glyphicon glyphicon-user">：</span>{% if user.sex==1 %}
+                                            男{% elif user.sex==2 %}女{% else %}未知{% endif %} &nbsp
+                                            <span class="glyphicon glyphicon-briefcase">：</span>
+                                            {% if user.occupation==None %}未知{% else %}{{ user.occupation }}{% endif %}
+                                        </p></small>
+                                </h4>
+                                <p></p>
+                                <hr>
+                                {% if user.brief == None %}
+                                    <p>主人很懒，什么都没留下</p>
+                                {% else %}
+                                    <p>{{ user.brief }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="col-xs-6 col-md-4">
+                            <h5>发表:
+                                <small><span class="glyphicon glyphicon-list-alt"></span> {{ user.post.count() }}
+                                    文章&nbsp&nbsp
+                                    <span class="glyphicon glyphicon-comment"></span> {{ user.comments.count() }} 评论
+                                </small>
+                            </h5>
+                            <h5>获得:
+                                <small><span class="glyphicon glyphicon-thumbs-up"></span> {{ user.count_like() }} 赞赏
+                                </small>
+                            </h5>
+                        </div>
+
+                        <div class="col-xs-6 col-md-4">
+                            <div class="col-xs-6">
+                                <h4>
+                                    <small>关注了</small>
+                                    <br>
+                                    {{ user.followed.count() }}人
+                                </h4>
+                            </div>
+                            <div class="col-xs-6">
+                                <h4>
+                                    <small>关注者</small>
+                                    <br>
+                                    {{ user.followers.count() }}人
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-md-4">
+                            {% if g.user.id != user.id %}
+                                {% if g.user.is_following(user) %}
+                                    <a type="button" href="/people/{{ user.id }}/unfollow" class="btn btn-danger"><span
+                                            class="glyphicon glyphicon-minus"></span>取消关注</a>
+                                {% else %}
+                                    <a type="button" href="/people/{{ user.id }}/follow" class="btn btn-success"><span
+                                            class="glyphicon glyphicon-plus"></span>关注</a>
+                                {% endif %}
+                                <a type="button" href="/people/{{ user.id }}/message" class="btn btn-primary"><span
+                                        class="glyphicon glyphicon-send"></span>发私信</a>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>{{ user.nickname }}
+                            <small>的草稿</small>
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+
+                        {% for draft in drafts %}
+
+                            <div class="media-right">
+                                <div class="media-body">
+                                    <h4 class="media-heading">
+                                        <a href="/people/draft/{{ draft.id }}">{{ draft.title }}</a> <br>
+                                        <small>最后修改:{{ momentjs(draft.time_update).fromNow() }} &nbsp &nbsp <a
+                                                href="/draft_editor/{{ draft.id }}" class="glyphicon glyphicon-pencil">编辑</a>
+                                            <p class="text-right">
+                                                <a href="/people/del_draft/{{ draft.id }}"
+                                                   class="glyphicon glyphicon-trash"></a>
+                                            </p>
+                                        </small>
+                                    </h4>
+                                    {{ draft.abstract }}
+                                </div>
+                            </div>
+                            <hr>
+
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-6 col-md-4">
+                <div class="list-group">
+
+                    <a href="/people/{{ user.id }}" class="list-group-item">动态</a>
+                    <a href="/people/{{ user.id }}/post" class="list-group-item">ta的文章</a>
+                    <a href="#" class="list-group-item">ta的收藏</a>
+
+                    {% if g.user.id == user.id %}
+                        <hr>
+                        <a href="/people/notify" class="list-group-item">消息</a>
+                        <a href="#" class="list-group-item active">草稿</a>
+                        <a href="/people/edit" class="list-group-item">修改资料</a>
+                        <a href="/people/privicy" class="list-group-item">隐私设置</a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}

@@ -21,6 +21,12 @@
             text-align: left;
         }
 
+        .label {
+            margin: auto;
+            left: 0px;
+            text-align:left;
+        }
+
         #container {
             max-width: 1600px;
             min-width: 400px;
@@ -217,7 +223,7 @@
     </div>
 
 
-    <div class="toc col-md-4 bs-docs-sidebar hidden-print hidden-xs hidden-sm" role="complementary" id="float">
+    <div class="toc col-md-4 bs-docs-sidebar hidden-print hidden-xs hidden-sm" role="complementary" id="toc">
         <ul class="nav bs-docs-sidenav">
             <li><a href="#"><span class="glyphicon glyphicon-eject"> 返回标题</span></a></li>
             {{ TOC }}
@@ -254,8 +260,8 @@
                 position($(this));
             });
         };
-        $("#float").smartFloat();
-        $(".content").scrollspy({target: '#float'})
+        $("#toc").smartFloat();
+        $(".content").scrollspy({target: '#toc'})
 
 
     </script>

@@ -1,0 +1,75 @@
+{% extends "header.html" %}
+
+{% block body %}
+
+    <style type="text/css">
+        body {
+            background: url({{ url_for('static', filename='images/3.jpg')}});
+            background-size: 100% auto;
+        }
+
+        form {
+            margin-left: 40px;
+            margin-right: 40px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            margin-top: 100px;
+            max-width: 400px;
+            min-width: 250px;
+            box-shadow: 3px 4px 3px 2px #666666;
+        }
+
+
+    </style>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4"></div>
+
+
+            <div class="col-xs-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h4 class="form-signin-heading">欢迎回来!</h4></div>
+                    <form action="" method="post" class="form-signin" role="form">
+
+                        {{ loginform.hidden_tag() }}
+
+                        <div class="row form-group">
+                            请输入您注册时使用的电子邮箱::<br>
+                            {{ loginform.email(size=30, placeholder='user@Email.com', class='form-control') }}<br>
+                            {% for error in loginform.email.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </div>
+
+
+                        <div class="row form-group">
+                            请输入您的密码:<br>
+                            {{ loginform.password(size=30, class='form-control') }}<br>
+                            {% for error in loginform.password.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </div>
+
+                        <hr>
+                        <button class="button button-rounded button-raised button-primary" type="submit"
+                                name="form-name"
+                                value="login">
+                            登入
+                        </button>
+
+                        &nbsp;&nbsp;&nbsp;<a href="/register">去注册账号</a>
+                    </form>
+
+                </div>
+            </div>
+            <div class="col-xs-4"></div>
+        </div>
+    </div>
+
+
+{% endblock %}

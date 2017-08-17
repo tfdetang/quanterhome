@@ -1,0 +1,225 @@
+{% extends "header.html" %}
+
+{% block body %}
+
+    <style type="text/css">
+
+        .navlink {
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 20px;
+            max-width: 1000px;
+            min-width: 400px;
+        }
+
+        .Title {
+            margin: auto;
+            left: 0px;
+            right: 0px;
+            position: relative;
+            margin-top: 50px;
+            text-align: left;
+        }
+
+        #container {
+            margin: auto;
+            max-width: 1600px;
+            min-width: 400px;
+        }
+
+        .paper {
+            position: relative;
+            background-color: White;
+            z-index: 1000;
+        }
+
+        #mark-html img {
+            max-width: 700px;
+            position: relative;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
+
+        .media-body img {
+            max-width: 500px;
+        }
+
+        .content {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .author {
+            width: 80px;
+            position: relative;
+            margin: auto;
+            margin-top: 30px;
+        }
+
+        .author-icon {
+            width: 70px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .comment-author {
+            text-align: left;
+            font-size: 20px;
+        }
+
+        .comment-area {
+            left: 0px;
+            right: 0px;
+            position: relative;
+        }
+
+        .comment {
+            position: relative;
+        }
+
+        .modal {
+            top: 200px;
+        }
+
+        .spliter {
+            border: 0;
+            height: 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .pagination {
+            position: relative;
+            margin: auto;
+        }
+
+        .toc {
+            position: absolute;
+            left: 70px;
+            max-width: 300px;
+            min-width: 150px;
+        }
+
+
+    </style>
+
+    <div class="row">
+
+        <div class="col-md-2">
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="navlink">
+                <a style="color:black" href="/people/drafts">我的草稿</a>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-2"></div>
+
+        <div class="col-md-6 col-xs-10">
+            <div class="Title">
+                <h2>{{ draft.title }}</h2>
+                <p>最后编辑于:{{ draft.time_update }} <a href="/draft_editor/{{ draft.id }}"><span
+                        class="glyphicon glyphicon-pencil">编辑草稿</span></a></p>
+            </div>
+        </div>
+
+        <div class="col-md-1 hidden-xs hidden-sm">
+            <div class="author">
+                <img class="author-icon" src="{{ url_for('homepage') }}{{ draft.author.avatar }}">
+                <br>
+                <p class="author-icon"><a href="/people/{{ draft.author.id }}"
+                                          target="_blank">{{ draft.author.nickname }}</a>
+                </p>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="toc col-md-4 bs-docs-sidebar hidden-print hidden-xs hidden-sm" role="complementary" id="float">
+        <ul class="nav bs-docs-sidenav">
+            <li><a href="#"><span class="glyphicon glyphicon-eject"> 返回标题</span></a></li>
+            {{ TOC }}
+
+        </ul>
+    </div>
+
+
+    <script>
+        $.fn.smartFloat = function () {
+            var position = function (element) {
+                var top = element.position().top, pos = element.css("position");
+                $(window).scroll(function () {
+                    var scrolls = $(this).scrollTop();
+                    if (scrolls > top) {
+                        if (window.XMLHttpRequest) {
+                            element.css({
+                                position: "fixed",
+                                top: 0
+                            });
+                        } else {
+                            element.css({
+                                top: scrolls
+                            });
+                        }
+                    } else {
+                        element.css({
+                            position: "absolute",
+                            top: top
+                        });
+                    }
+                });
+            };
+            return $(this).each(function () {
+                position($(this));
+            });
+        };
+        $("#float").smartFloat();
+        $(".content").scrollspy({target: '#float'})
+
+
+    </script>
+
+    <div class="row">
+        <div class="col-md-2 hidden-xs hidden-sm"></div>
+        <div class="col-md-6 col-xs-12" id="container">
+
+            <div class="paper"> &nbsp&nbsp
+                <div class="container-fluid">
+
+                    <hr>
+
+                    <div class="content">
+
+                        <br>
+
+                        <div id="mark-html">
+
+                            {{ body }}
+
+                        </div>
+
+                    </div>
+
+                    <hr>
+                    <br>
+
+                </div>
+
+
+            </div>
+            <div class="col-md-2 hidden-xs hidden-sm"></div>
+        </div>
+    </div>
+
+{% endblock %}

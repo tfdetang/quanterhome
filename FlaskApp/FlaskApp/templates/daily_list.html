@@ -1,0 +1,108 @@
+{% extends "header.html" %}
+
+{% block body %}
+
+    <style type="text/css">
+
+        .head {
+            margin-top: -25px;
+            height: 200px;
+            background: url({{ url_for('static', filename='images/index-bg.jpg')}});
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
+
+        .history {
+            min-width: 500px;
+        }
+
+        blockquote {
+            font-size: 14px;
+        }
+
+        .panel {
+            box-shadow: 2px 1px 3px 1px #aaaaaa;
+        }
+
+
+    </style>
+
+    <link href="{{ url_for('static', filename='css/timeline.min.css') }}" rel="stylesheet">
+
+    <div class="well head">
+
+        <div class="text-center" style="color:white; margin-top:130px">
+            <h1>矿工日报:</h1><br>
+        </div>
+
+    </div>
+
+    <div class="container-fluid history">
+
+        <div class="col-md-2">
+        </div>
+
+        <div class="col-md-8">
+
+            <div class="row">
+
+                <div class="timeline timeline-single-column timeline-line-dotted">
+
+                    {% for item in items %}
+                        {% set date = item.time[0:10] %}
+                        {% if not date2 %}
+                            <span class="timeline-label">
+					<span class="label label-default">{{ date }}</span>
+					{% set date2 = date %}
+				</span>
+                        {% elif date!=date2 %}
+                            <span class="timeline-label">
+					<span class="label label-default">{{ date }}</span>
+					{% set date2 = date %}
+				</span>
+
+                        {% endif %}
+
+                        <div class="timeline-item">
+                            <div class="timeline-point">
+                                <i class="fa fa-history"></i>
+                            </div>
+                            <div class="timeline-event timeline-event-default">
+
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <a href="/people/{{ moment.user_id }}">
+                                                <img style="width:28px;"
+                                                     src="{{ url_for('homepage') }}{{ moment.moments_user.avatar }}"
+                                                     alt=" ">
+                                                {{ moment.moments_user.nickname }}</a>
+                                            <small>{{ momentjs(moment.time_moment).calendar() }}</small>
+                                        </h3>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p><b>{{ moment.operation }} <a
+                                                href="{{ moment.url }}">{{ moment.url_name }}</a></b></p>
+                                        {% if moment.context != '' %}
+                                            <blockquote><i class="fa fa-quote-left"></i>{{ moment.context }}
+                                            </blockquote>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+                    <span class="timeline-label">
+                            <span class="label label-danger">末尾</span>
+                        </span>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+{% endblock %}
